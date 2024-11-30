@@ -114,7 +114,7 @@ jobs:
     - name: Build and Push Frontend Docker Image
       uses: docker/build-push-action@v3
       with:
-        context: ./frontend
+        context: ./vnua-test
         push: true
         tags: |
           vuvanhoang/vnua-test-react:latest
