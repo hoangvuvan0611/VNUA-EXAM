@@ -17,9 +17,10 @@ services:
     ports:
       - "8088:8099"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresql:5432/yourdbname
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=yourpassword
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresql:5432/VNUA_EXAM
+      - SPRING_DATASOURCE_USERNAME=vuvanhoang
+      - SPRING_DATASOURCE_PASSWORD=Hoanglam06112003@
+      - SPRING_PROFILES_ACTIVE=prod
 
   frontend:
     build: 
