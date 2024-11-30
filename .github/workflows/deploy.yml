@@ -43,7 +43,7 @@ jobs:
     - name: Build Backend
       run: |
         # Di chuyển vào thư mục backend
-        cd VNUA-TEST
+        cd VNUA_TEST
         # Build project Maven, bỏ qua test
         mvn clean package -DskipTests
     
