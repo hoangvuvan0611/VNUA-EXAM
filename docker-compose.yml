@@ -21,7 +21,7 @@ services:
     ports:
       - "8088:8099"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5432/VNUA_EXAM
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://172.17.0.1:5432/vnua_exam
       - SPRING_DATASOURCE_USERNAME=vuvanhoang
       - SPRING_DATASOURCE_PASSWORD=Hoanglam06112003@
       - SPRING_PROFILES_ACTIVE=prod

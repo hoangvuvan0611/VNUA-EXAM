@@ -4,7 +4,7 @@ spring:
       on-profile: prod
 
   datasource:
-    url: jdbc:postgresql://172.17.0.1:5432/VNUA_EXAM
+    url: jdbc:postgresql://172.17.0.1:5432/vnua_exam
     username: vuvanhoang
     password: Hoanglam06112003@
     driver-class-name: org.postgresql.Driver
