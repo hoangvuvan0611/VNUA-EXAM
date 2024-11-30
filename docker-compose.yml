@@ -6,7 +6,7 @@ services:
       context: ./vnua-test
       dockerfile: Dockerfile
     ports:
-      - "3005:81"
+      - "3005:80"
     depends_on:
       - backend
     networks:
