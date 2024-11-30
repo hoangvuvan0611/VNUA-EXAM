@@ -25,10 +25,10 @@ services:
       - SPRING_PROFILES_ACTIVE=prod
 
   postgresql:
-    image: postgres:15
+    image: postgres:14
     environment:
-      POSTGRES_DB: yourdbname
-      POSTGRES_PASSWORD: yourpassword
+      POSTGRES_DB: vuvanhoang
+      POSTGRES_PASSWORD: Hoanglam06112003@
     volumes:
       - postgres-data:/var/lib/postgresql/data
 
