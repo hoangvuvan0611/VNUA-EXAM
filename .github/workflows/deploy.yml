@@ -141,6 +141,8 @@ jobs:
         script: |
           # Chuyển đến thư mục project
           cd /home/vuvanhoang/VNUA-EXAM
+
+          git pull origin main
           
           # Kéo image mới nhất
           docker-compose pull
