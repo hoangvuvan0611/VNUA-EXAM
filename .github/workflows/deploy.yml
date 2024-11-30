@@ -136,6 +136,7 @@ jobs:
         username: ${{ secrets.SERVER_USER }}
         # Key SSH (private key)
         key: ${{ secrets.SERVER_SSH_KEY }}
+        passphrase: ${{ secrets.SSH_PASSPHRASE }}
         # Các lệnh chạy trên server
         script: |
           # Chuyển đến thư mục project
