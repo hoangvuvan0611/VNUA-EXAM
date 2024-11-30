@@ -43,7 +43,7 @@ jobs:
     - name: Build Backend
       run: |
         # Di chuyển vào thư mục backend
-        cd backend
+        cd VNUA-TEST
         # Build project Maven, bỏ qua test
         mvn clean package -DskipTests
     
@@ -94,13 +94,13 @@ jobs:
     # Cài đặt dependencies
     - name: Install Dependencies
       run: |
-        cd frontend
+        cd vnua-test
         npm ci
     
     # Build frontend
     - name: Build Frontend
       run: |
-        cd frontend
+        cd vnua-test
         npm run build
     
     # Đăng nhập Docker Hub
