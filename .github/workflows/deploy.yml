@@ -61,7 +61,7 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         # Đường dẫn context build
-        context: ./backend
+        context: ./VNUA_TEST
         # Bật push image
         push: true
         # Tên và tag image
