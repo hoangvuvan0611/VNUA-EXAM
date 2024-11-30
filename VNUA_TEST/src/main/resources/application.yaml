@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: VNUA_TEST
+  servlet: #Multipart file
+    multipart:
+      enabled: true
+      max-file-size: 10MB #Gioi han kich thuoc moi file
+      max-request-size: 20MB #Gioi han tong kich thuoc file trong 1 request
+
+
+
+#Spring actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        exclude: "*"
+  endpoint:
+    health:
+      show-details: always

@@ -1,0 +1,62 @@
+@import "@fontsource/roboto/index.css";
+@import "@fontsource/nunito/index.css";
+
+* {
+  font-family: 'nunito', Arial, sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+.admin-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.admin-container {
+  display: flex;
+  flex: 1;
+}
+
+.admin-main {
+  flex: 1;
+  /* background-color: #f5f5f5; */
+}
+
+.exam-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.exam-main {
+  flex: 1;
+  padding: 20px;
+}
+
+.no-copy {
+  user-select: none; /* Ngăn việc chọn văn bản */
+  cursor: not-allowed; /* Hiển thị con trỏ cấm */
+}
+
+.glass{
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 20px;
+  border:1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.circlePosition {
+  z-index: 1;
+}

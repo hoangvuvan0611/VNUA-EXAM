@@ -1,0 +1,53 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+  web:
+
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/VNUA_TEST
+    username: postgres
+    password: Hoanglam06112003@
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 400
+      connection-timeout: 10000 #maximum number of milliseconds that a client will wait for a connection
+      minimum-idle: 200 #minimum number of idle connections maintained by HikariCP in a connection pool
+      idle-timeout: 10000 #maximum idle time for connection
+
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: update
+    database: postgresql
+    open-in-view: true
+  main:
+    allow-bean-definition-overriding: true
+
+server:
+  port: 8099
+  servlet:
+    context-path: /api/v1
+
+
+
+security:
+  jwt:
+    token:
+      secret-key: "khgfjdkhg45345djfhgkdhguytit4yfdss34yt49hrughkdjfhgkfdhgdkfhgkddas"
+      # 1 days: 1000*60*60*24
+      expiration: 86400000
+      # 2 days
+      refresh_expiration: 172800000
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+
+# Size of chunk to read excel, csv file
+size:
+  chunk: 100
+  batch: 100

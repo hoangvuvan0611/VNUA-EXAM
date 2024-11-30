@@ -1,0 +1,28 @@
+* {
+    cursor: pointer;
+}
+
+h2{
+    font-weight: 100;
+}
+
+.sidebar-item {
+    margin-top: 1em;
+    font-weight: 500;
+}
+
+#active{
+    background-color: #0faf0ff5;
+    color: white;
+}
+
+#active svg{
+    color: white;
+}
+
+.sidebar-logo-support {
+    padding: 1em;
+    background-color: rgba(0, 255, 55, 0.038);
+}
+
+

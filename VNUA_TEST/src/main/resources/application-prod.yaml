@@ -1,0 +1,31 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  datasource:
+    url: jdbc:postgresql://host.docker.internal:5432/your_database
+    username:
+    password:
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 1000
+      connection-timeout: 10000 #maximum number of milliseconds that a client will wait for a connection
+      minimum-idle: 200 #minimum number of idle connections maintained by HikariCP in a connection pool
+      idle-timeout: 10000 #maximum idle time for connection
+
+  jpa:
+    database: postgresql
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+
+security:
+  jwt:
+    token:
+      secret-key: "khgfjdkhg45345djfhgkdhguytit4yfdss34yt49hrughkdjfhgkfdhgdkfhgkddas"
+      # 1 days: 1000*60*60*24
+      expiration: 86400000
+      # 2 days
+      refresh_expiration: 172800000
+

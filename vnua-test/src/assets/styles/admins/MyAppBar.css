@@ -1,0 +1,12 @@
+#headerBar_clock{
+    font-size: 2em;
+    font-weight: bold;
+}
+
+.headerBar_clock:hover{
+    background-color: rgba(255, 255, 255, .35);
+}
+
+.abc{
+    color: rgba(137, 43, 226, 0.877);
+}
