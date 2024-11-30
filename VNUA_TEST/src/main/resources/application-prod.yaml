@@ -4,7 +4,7 @@ spring:
       on-profile: prod
 
   datasource:
-    url: jdbc:postgresql://host.docker.internal:5432/VNUA_EXAM
+    url: jdbc:postgresql://172.17.0.1:5432/VNUA_EXAM
     username: vuvanhoang
     password: Hoanglam06112003@
     driver-class-name: org.postgresql.Driver
@@ -34,7 +34,7 @@ logging:
 security:
   jwt:
     token:
-      secret-key: "khgfjdkhg45345dj#$%&*(@#$@#$fhgkdhguytit4yfdss34yt49hrughkdjfhgkfdhgdkfhgkddas%^$@#$2#$@#$@sdfgsdgdfgdfg"
+      secret-key: "khgfjdkhg45345dj#$%&*(@#$@#$fhgkdhguytit4yfdss34yt4234}ơ]ơ]ơp]-=0=-0=-09hrughkdjfhgkfdhgdkfhgkddas%^$@#$2#$@#$@s2342342dfgsdgdfgdfg"
       # 1 days: 1000*60*60*24
       expiration: 86400000
       # 2 days
