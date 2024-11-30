@@ -140,7 +140,7 @@ jobs:
         # Các lệnh chạy trên server
         script: |
           # Chuyển đến thư mục project
-          cd /path/to/your/project
+          cd /VNUA-EXAM
           
           # Kéo image mới nhất
           docker-compose pull
