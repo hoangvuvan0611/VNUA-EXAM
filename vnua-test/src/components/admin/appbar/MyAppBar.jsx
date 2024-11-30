@@ -1,11 +1,8 @@
 import React, {useState, useEffect} from "react";
 import { useNavigate} from "react-router-dom";
-import { Box, Toolbar, Card, CardContent, Typography, IconButton, Switch } from "@mui/material";
+import { Box, Toolbar, Typography, IconButton } from "@mui/material";
 import '../../../assets/styles/admins/MyAppBar.css';
 
-import EventNoteIcon from '@mui/icons-material/EventNote';
-import MailOutlineIcon from '@mui/icons-material/MailOutline';
-import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import { Avatar } from "@mui/material";
 import { useThemeContext } from "../../../utils/AppThemeProvider";
 import { MaterialUISwitch } from "../../common/switch/MaterialUISwitch ";

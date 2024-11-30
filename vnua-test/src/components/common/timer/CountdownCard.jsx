@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { Box, Typography, Card } from '@mui/material';
 import '../../../assets/styles/exams/ExamRoom.css'
 
 const CountdownCard = ({ digit, unit }) => {

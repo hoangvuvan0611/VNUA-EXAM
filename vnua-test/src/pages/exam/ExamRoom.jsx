@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { 
   Container,          // Component bọc ngoài giới hạn width tối đa và căn giữa nội dung
   Box,                // Div với các utility props của Material-UI
@@ -7,13 +7,10 @@ import {
   Radio,              // Input Type Radio
   FormControlLabel,   // Label wrapper cho input controls
   Button,             // Component button
-  IconButton,         // Button dạng icon
   Paper,               // Container với box-shadow và background màu trắng
   Grid2,
-  Stack,
 } from '@mui/material';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import CountdownCard from '../../components/common/timer/CountdownCard';
 import '../../assets/styles/exams/ExamRoom.css';
 
 const FlipCard = ({ digit = 0 }) => {
@@ -26,7 +23,7 @@ const FlipCard = ({ digit = 0 }) => {
 };
 
 function ExamRoom() {
-  const [timeLeft, setTimeLeft] = useState(1900); // 15:30 in seconds
+  // const [timeLeft, setTimeLeft] = useState(1900); // 15:30 in seconds
   
     // Format time
     // const formatTime = (totalSeconds) => {

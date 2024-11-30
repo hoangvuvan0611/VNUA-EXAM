@@ -32,7 +32,6 @@ import {
   KeyboardArrowUp as KeyboardArrowUpIcon,
   Search as SearchIcon,
   FilterList as FilterListIcon,
-  CheckBox,
   Delete,
 } from "@mui/icons-material";
 

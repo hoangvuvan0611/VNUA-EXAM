@@ -18,9 +18,6 @@ import {
 
 import {
     Add as AddIcon,
-    Edit as EditIcon,
-    Delete as DeleteIcon,
-    Search as SearchIcon,
     FileUpload as FileUploadIcon,
     EditNote,
 } from '@mui/icons-material';
@@ -63,6 +60,7 @@ const StudentManagement = () => {
         setOpenDialogUploadFile(false);
         // Đặt lại giá trị của file khi đóng hộp thoại
         setSelectedFile(null);
+        console.log(selectedFile)
     }
 
     return (

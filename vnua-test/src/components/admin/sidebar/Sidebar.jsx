@@ -1,10 +1,8 @@
-import React, { useState } from "react";
+import React, { } from "react";
 import Close from "@mui/icons-material/Close";
 import Menu from "@mui/icons-material/Menu";
 import '../../../assets/styles/admins/Sidebar.css';
 import logoSideBar from '../../../assets/images/logos/logo.png';
-import logoSupport from '../../../assets/images/logos/Business support-bro.svg';
-import { Avatar } from "@mui/material";
 import { SidebarData } from "./SidebarData";
 import {Link, useNavigate} from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';

@@ -1,6 +1,5 @@
-import { Button, Container, Grid2, Typography, Box } from "@mui/material";
-import { red } from "@mui/material/colors";
-import { Card, CardContent, CardHeader } from "@mui/material";
+import { Grid2, Typography } from "@mui/material";
+import { Card, CardContent } from "@mui/material";
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import logoWorking from '../../assets/images/logos/Working-bro.svg';
