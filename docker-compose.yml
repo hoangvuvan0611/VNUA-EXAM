@@ -10,12 +10,12 @@ services:
 
   backend:
     build: 
-      context: ./backend
+      context: ./VNUA_TEST
       dockerfile: Dockerfile
     depends_on:
       - postgresql
     ports:
-      - "8080:8080"
+      - "8088:8099"
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresql:5432/yourdbname
       - SPRING_DATASOURCE_USERNAME=postgres
@@ -23,7 +23,7 @@ services:
 
   frontend:
     build: 
-      context: ./frontend
+      context: ./vnua-test
       dockerfile: Dockerfile
     ports:
       - "80:80"
