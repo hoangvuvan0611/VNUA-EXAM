@@ -18,6 +18,9 @@ services:
       dockerfile: Dockerfile
     # depends_on:
     #   - postgresql
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
     ports:
       - "8088:8099"
     environment:
