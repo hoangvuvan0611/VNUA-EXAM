@@ -6,7 +6,7 @@ services:
       context: ./vnua-test
       dockerfile: Dockerfile
     ports:
-      - "80:80"
+      - "8088:8099"
     depends_on:
       - postgresql
 
@@ -17,7 +17,7 @@ services:
     depends_on:
       - postgresql
     ports:
-      - "8088:8099"
+      - "3005:3000"
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresql:5432/VNUA_EXAM
       - SPRING_DATASOURCE_USERNAME=vuvanhoang
