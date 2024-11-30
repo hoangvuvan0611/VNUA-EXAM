@@ -1,16 +1,16 @@
 version: '3.8'
 services:
 
-  backend:
+  fontend:
     build: 
       context: ./vnua-test
       dockerfile: Dockerfile
     ports:
       - "8088:8099"
     depends_on:
-      - postgresql
+      - backend
 
-  fontend:
+  backend:
     build: 
       context: ./VNUA_TEST
       dockerfile: Dockerfile
