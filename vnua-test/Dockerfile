@@ -17,6 +17,7 @@ FROM nginx:alpine
 # Copy the React build output to Nginx's web directory
 COPY --from=build /app/build /usr/share/nginx/html
 # Copy custom Nginx configuration (optional)
+RUN chown -R nginx:nginx /usr/share/nginx/html  # Đảm bảo quyền truy cập vào các file
 # Uncomment the following line if you have a custom nginx.conf
 RUN rm /etc/nginx/conf.d/default.conf
 COPY nginx.conf /etc/nginx/conf.d/default.conf
