@@ -1,7 +1,7 @@
 version: '3.8'
 services:
 
-  frontend:
+  vnua-test:
     build: 
       context: ./vnua-test
       dockerfile: Dockerfile
@@ -10,7 +10,7 @@ services:
     depends_on:
       - backend
 
-  backend:
+  VNUA_TEST:
     build: 
       context: ./VNUA_TEST
       dockerfile: Dockerfile
