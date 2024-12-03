@@ -46,7 +46,7 @@ function ExamRoom() {
   
     // const time = formatTime(timeLeft);
 
-    const countToDate = new Date().setSeconds(new Date().getSeconds() + 20);
+    const countToDate = new Date().setSeconds(new Date().getSeconds() + 3000);
     let previousTimeBetweenDates;
     setInterval(() => {
       const currentDate = new Date();
@@ -116,27 +116,27 @@ function ExamRoom() {
               p: 1,
               scrollbarColor: 'green'
             }}>
-              <Paper sx={{ p: 2, mb: 1, bgcolor: '#ffffff99'}} className='glass'>
-                <Typography variant="h6" sx={{ mb: 2, textAlign: 'center', fontWeight: 'bold' }}>
+              <Paper sx={{ p: 1, mb: 0.5, bgcolor: '#ffffff99'}} className='glass'>
+                <Typography variant="body1" sx={{ mb: 1.5, textAlign: 'center', fontWeight: 'bold' }}>
                   Bài thi tin học Công Nghệ Thông Tin
                 </Typography>
-                <Typography sx={{ color: 'emerald.600', fontWeight: 'medium', mb: 1 }}>
+                <Typography variant='subtitle2' sx={{ color: 'emerald.600', fontWeight: 'medium', mb: 1 }}>
                   Thí sinh: Vũ Văn Hoàng
                 </Typography>
-                <Typography sx={{ color: 'emerald.600', fontWeight: 'medium', mb: 1 }}>
+                <Typography variant='subtitle2'sx={{ color: 'emerald.600', fontWeight: 'medium', mb: 1 }}>
                   Mã thí sinh: 6656485
                 </Typography>
 
-                <Typography sx={{ color: 'emerald.600', fontWeight: 'medium', mb: 1 }}>
+                <Typography variant='subtitle2' sx={{ color: 'emerald.600', fontWeight: 'medium', mb: 1 }}>
                   Lớp: K66CNPMA
                 </Typography>
-                <Typography sx={{ mb: 1 }}>Mã đề: 99</Typography>
-                <Typography sx={{ mb: 1 }}>Thời gian làm bài: 45 phút</Typography>
+                <Typography variant='subtitle2' sx={{ mb: 1 }}>Mã đề: 99</Typography>
+                <Typography variant='subtitle2' sx={{ mb: 1 }}>Thời gian làm bài: 45 phút</Typography>
               </Paper>
 
               <Paper sx={{ p: 2, mb: 2 }}>
                 <AccessTimeIcon/>
-                <Typography variant="h6" sx={{ mb: 2, textAlign: 'center' }}>Thời gian còn lại</Typography>
+                <Typography variant="body1" sx={{ mb: 2, textAlign: 'center' }}>Thời gian còn lại</Typography>
                 <div className="container">
                   <div className="container-segment">
                     <div className="segment-title">Giờ</div>
@@ -181,7 +181,7 @@ function ExamRoom() {
               </Paper>
 
               <Paper sx={{ p: 2, mb: 4, maxWidth: '100%', overflow: 'hidden'}}>
-                <Typography variant="h6" sx={{ mb: 2, textAlign: 'center' }}>Đáp án đã chọn</Typography>
+                <Typography variant="subtitle1" sx={{ textAlign: 'center' }}>Đáp án đã chọn</Typography>
                 <Box sx={{ 
                   display: 'grid',
                   gridTemplateColumns: 'repeat(auto-fill, minmax(35px, 1fr))',
@@ -223,44 +223,27 @@ function ExamRoom() {
 
           <Grid2 item size={{ xs: 12, md: 9 }}>
             {[...Array(60)].map((_, index) => (
-              <Paper key={index} sx={{ p: 4, mb: 4 }}>
-                <div className='no-copy'>
-                  <Typography sx={{ mb: 2 }}>
-                    Câu {index + 1}:   Lima anakwan Ratu: Joko, Adi, Rimba, và Sato, selalu bermain bersama. Rumah 
-                    mereka sekolah: Joko, selain memperoleh Sano, setelah di dimulai Adi. Rimba 
-                    menjadi anak terakhir yang ditempui. Sementara rumah Ratu terletak di antara rumah Joko 
-                    và rumah Adi. Berikut ini pernyataan yang benar adalah
+              <Paper key={index} sx={{ p: 2, mb: 2 }}>
+                <Box className='no-copy'>
+                  <Typography sx={{ mb: 0.5 }}>
+                    Câu {index + 1}: Tỉnh Vĩnh Phú cũ được tách ra thành mấy tỉnh, thành?
                   </Typography>
-                </div>
+                </Box>
                 <RadioGroup>
-                  <FormControlLabel
-                    value="1"
-                    control={<Radio color='success'/>}
-                    label="Rumah Ratu terletak paling jauh"
-                    sx={{ mb: 1 }}
-                  />
                   <FormControlLabel
                     value="2"
                     control={<Radio color='success'/>}
-                    label="Rumah Adi terletak paling jauh"
-                    sx={{ mb: 1 }}
+                    label="2"
                   />
                   <FormControlLabel
                     value="3"
                     control={<Radio color='success'/>}
-                    label="Rumah Rimba terletak paling jauh"
-                    sx={{ mb: 1 }}
+                    label="3"
                   />
                   <FormControlLabel
                     value="4"
                     control={<Radio color='success'/>}
-                    label="Rumah Sano terletak paling dekat"
-                    sx={{ mb: 1 }}
-                  />
-                  <FormControlLabel
-                    value="5"
-                    control={<Radio color='success'/>}
-                    label="Rumah Adi terletak paling dekat"
+                    label="4"
                   />
                 </RadioGroup>
               </Paper>

@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:8088/api/v1',
-  timeout: 60000,
+  baseURL: process.env.REACT_APP_API_BASE_URL_TEST,
+  timeout: process.env.REACT_APP_TIMEOUT,
 });
 
 // Add a request interceptor

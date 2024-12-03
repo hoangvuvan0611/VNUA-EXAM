@@ -64,7 +64,7 @@ const StudentManagement = () => {
     }
 
     return (
-        <div className="" style={{position: 'relative'}}>
+        <Box className="" style={{position: 'relative'}}>
             <div className="shadow-sm bg-white" style={{ position: 'sticky', top: 0, left: 0, right: 0, zIndex: 39 }}>
                 <MyAppBar label={'Quản lý sinh viên, lớp'}/>
             </div>
@@ -94,13 +94,13 @@ const StudentManagement = () => {
                     >
                         <Typography variant="h6">{unit}</Typography>
                         <Stack direction="row" spacing={1} mt={1} alignItems="center">
-                        <AvatarGroup images={["img1_url", "img2_url"]} />
+                            <AvatarGroup images={["img1_url", "img2_url"]} />
                         </Stack>
                         <Typography variant="body2" color="textSecondary">
-                        45 sinh viên
+                            45 sinh viên
                         </Typography>
                         <Typography variant="body2" color="textSecondary">
-                        Giảng viên: Nguyễn Văn A
+                            Giảng viên: Nguyễn Văn A
                         </Typography>
                         <Grid2 container justifyContent={'space-between'} sx={{mt: 1, mb: 1}}>
                             <Button variant="text" color="info">
@@ -177,7 +177,7 @@ const StudentManagement = () => {
 
             {/* Dialog them moi sinh vien */}
             <DialogAddNew open={openDialogAddStudent} onClose={handleCloseDialogAddStudent} title={"Thêm mới sinh viên"}/>
-        </div>
+        </Box>
     );
 }
 
