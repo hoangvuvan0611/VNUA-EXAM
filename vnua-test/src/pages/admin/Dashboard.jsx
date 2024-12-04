@@ -1,5 +1,5 @@
-import { Avatar, AvatarGroup, Box, Button, Grid2, IconButton, Stack, Tooltip, Typography } from "@mui/material";
-import { Card, CardContent } from "@mui/material";
+import { Avatar, AvatarGroup, Box, Grid2, IconButton, Stack, Tooltip, Typography } from "@mui/material";
+import { Card } from "@mui/material";
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import logoWorking from '../../assets/images/logos/Working-bro.svg';
@@ -9,7 +9,7 @@ import MyAppBar from "../../components/admin/appbar/MyAppBar";
 import { useTheme } from '@mui/material/styles';
 import { EditNote } from "@mui/icons-material";
 import { Link } from "react-router-dom";
-import { ToastClassName, ToastContainer, toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import api from "../../services/api/axios.config";
 
 const CardIntro = ({index, title, }) => {

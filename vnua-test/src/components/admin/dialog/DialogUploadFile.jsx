@@ -175,7 +175,6 @@ const DialogUploadFile = ({ open, onClose, title }) => {
 
         try {
             const response = await api.post('/file/readFileQuestion', formData, uploadConfig);
-            console.log(response);
             setQuestions(response.data.dataList);
         } catch (error) {
             setUploadError("Có lỗi xảy ra khi tải lên. Vui lòng thử lại!");
