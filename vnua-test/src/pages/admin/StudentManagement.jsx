@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import MyAppBar from "../../components/admin/appbar/MyAppBar";
-import EnhancedTable from "./student/EnhancedTable";
+import EnhancedTable from "../../components/admin/table/EnhancedTable";
 
 import { 
     Box, 
