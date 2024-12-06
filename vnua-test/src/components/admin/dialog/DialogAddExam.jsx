@@ -25,6 +25,10 @@ const DialogAddExam = ({isOpen, onClose, title, isEditing}) => {
     const [ poetryList, setPoetryList ] = useState([]); // Danh sách ca thi
     const [ examRoomList, setExamRoomList ] = useState([]); // Danh sách phòng thi
     const [ poetryNum, setPoetryNum ] = useState(null); 
+    const [ seachResults, setSearchResult ] = useState([]); // Danh sách kết quả tìm kiếm cán bộ coi thi
+    const [ selectedUser, setSelectedUser ] = useState([]); // Danh sách cán bộ coi thi được chọn
+    const [ keyword, setKeyword ] = useState();
+
     const [ newExam, setNewExam ] = useState({ // Đối tượng chứa thông tin của  kỳ thi
         id: "",
         examCode: "",
@@ -32,15 +36,6 @@ const DialogAddExam = ({isOpen, onClose, title, isEditing}) => {
         poetryNum: "",
         startDate: "",
         endDate: "",
-    });
-    const [ newPoetry, setNewPoetry ] = useState({ // Đối tượng chứa thông tin của ca thi
-        poetryName: "",
-        startTime: "",
-        endTime: "",
-    });
-    const [ newRoomExam, setNewRoomExam ] = useState({ // Đối tượng chứa thông tin của phòng thi
-        examRoomName: "",
-        
     });
 
     // Xử lý đóng dialog
@@ -53,11 +48,6 @@ const DialogAddExam = ({isOpen, onClose, title, isEditing}) => {
           poetryNum: "",
           startDate: "",
           endDate: "",
-        });
-        setNewPoetry({
-            poetryName: "",
-            startTime: "",
-            endTime: "",
         });
         // setIsEditing(false);
         setIsDisabledInputExamNum(false);
@@ -79,14 +69,6 @@ const DialogAddExam = ({isOpen, onClose, title, isEditing}) => {
             handleUpdateExamSessionCount(e);
             setIsDisabledInputExamNum(true);
         }
-    };
-    const handleUpdateRoom = (sessionIndex, roomIndex, field, value) => { // Xử lý cập nhật kỳ thi
-        const updatedSessions = [...newExam.poetryList];
-        updatedSessions[sessionIndex].roomDetails[roomIndex][field] = value;
-        setNewExam((prev) => ({
-            ...prev,
-            poetryList: updatedSessions
-        }));
     };
     
     // Xử lý thông tin ca thi
