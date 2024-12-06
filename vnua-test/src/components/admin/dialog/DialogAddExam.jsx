@@ -12,11 +12,15 @@ import {
     Typography, 
     List,
     IconButton,
-    Tooltip
+    Tooltip,
+    Autocomplete,
+    CircularProgress
 } from "@mui/material";
 import { useState } from "react";
 import { FcExpand, FcPlus } from "react-icons/fc";
 import { MdDelete, MdOutlinePlaylistAddCircle } from "react-icons/md";
+import api from "../../../services/api/axios.config";
+import { ToastContainer, toast } from "react-toastify";
 
 const DialogAddExam = ({isOpen, onClose, title, isEditing}) => {
 
@@ -25,9 +29,10 @@ const DialogAddExam = ({isOpen, onClose, title, isEditing}) => {
     const [ poetryList, setPoetryList ] = useState([]); // Danh sách ca thi
     const [ examRoomList, setExamRoomList ] = useState([]); // Danh sách phòng thi
     const [ poetryNum, setPoetryNum ] = useState(null); 
-    const [ seachResults, setSearchResult ] = useState([]); // Danh sách kết quả tìm kiếm cán bộ coi thi
+    const [ searchResults, setSearchResult ] = useState([]); // Danh sách kết quả tìm kiếm cán bộ coi thi
     const [ selectedUser, setSelectedUser ] = useState([]); // Danh sách cán bộ coi thi được chọn
     const [ keyword, setKeyword ] = useState();
+    const [ loadingUser, setLoadingUser ] = useState(false); // Trạng thái loading khi tải danh sách cán bộ coi thi
 
     const [ newExam, setNewExam ] = useState({ // Đối tượng chứa thông tin của  kỳ thi
         id: "",
@@ -138,8 +143,6 @@ const DialogAddExam = ({isOpen, onClose, title, isEditing}) => {
             return updateRoomList;
         });
     }
-
-
     const handleBlur = (value) => {
         if (value.trim() === '') {
             setErrors(true); // Hiển thị lỗi nếu trường bị để trống
@@ -148,6 +151,29 @@ const DialogAddExam = ({isOpen, onClose, title, isEditing}) => {
         }
     };
 
+    // Xử lý lấy danh sách cán bộ coi thi
+    const handleInputLoadUserChange = async (event, value) => {
+        setKeyword(value);
+        if (value.trim() === "") {
+            setSearchResult([]);
+            return;
+        }
+
+        setLoadingUser(true);
+        try {
+            const response = await api.get(
+                `user/usersByKeyword=${keyword}`
+            );    
+            console.log(keyword)
+        } catch (error) {
+            toast.warning("Hệ thống đang gặp sự cố, vui lòng thử lại sau!", {
+                icon: "⚠️",
+            });
+        } finally {
+            setLoadingUser(false);
+        }
+    }
+
     return(
         <Dialog
             open={isOpen}
@@ -155,6 +181,7 @@ const DialogAddExam = ({isOpen, onClose, title, isEditing}) => {
             maxWidth="70%"
             sx={{ "& .MuiDialog-paper": { borderRadius: "15px" } }}
         >
+            <ToastContainer icon={true} />
             <DialogTitle alignItems="center" display={"flex"}>
                 <FcPlus />
                 <Typography variant="h6" ml={1}>
@@ -421,7 +448,6 @@ const DialogAddExam = ({isOpen, onClose, title, isEditing}) => {
                                                                 <Grid2 key={roomIndex} item size={{ xs: 12 }}>
                                                                     <TextField
                                                                         fullWidth
-                                                                        type="number"
                                                                         label={'Cán bộ coi thi'}
                                                                         name={`examSessions[${index}].roomDetails[${roomIndex}].studentCount`}
                                                                         value={room.roomNumber}
@@ -432,6 +458,34 @@ const DialogAddExam = ({isOpen, onClose, title, isEditing}) => {
                                                                         margin="none"
                                                                         size="small"
                                                                     />
+                                                                    <Autocomplete
+                                                                        options={searchResults}
+                                                                        onInputChange={handleInputLoadUserChange}
+                                                                        inputValue={keyword}
+                                                                        loading={loadingUser}
+                                                                        
+                                                                        renderInput={(params) => {
+                                                                            <TextField
+                                                                                {...params}
+                                                                                label="Nhập tên cán bộ coi thi"
+                                                                                variant="outlined"
+                                                                                fullWidth
+                                                                                InputProps={{
+                                                                                    ...params.InputProps,
+                                                                                    endAdornment: (
+                                                                                        <>
+                                                                                            {loadingUser ? <CircularProgress size={20}/> : null}
+                                                                                            {params.InputProps.endAdornment}
+                                                                                        </>
+                                                                                    ),
+                                                                                }}
+                                                                            >
+                                                                                
+                                                                            </TextField>
+                                                                        }}
+                                                                    >
+
+                                                                    </Autocomplete>
                                                                 </Grid2>
                                                             </Grid2>
                                                         </AccordionDetails>
