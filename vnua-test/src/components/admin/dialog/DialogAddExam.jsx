@@ -446,7 +446,7 @@ const DialogAddExam = ({isOpen, onClose, title, isEditing}) => {
                                                                     />
                                                                 </Grid2>
                                                                 <Grid2 key={roomIndex} item size={{ xs: 12 }}>
-                                                                    <TextField
+                                                                    {/* <TextField
                                                                         fullWidth
                                                                         label={'Cán bộ coi thi'}
                                                                         name={`examSessions[${index}].roomDetails[${roomIndex}].studentCount`}
@@ -457,19 +457,21 @@ const DialogAddExam = ({isOpen, onClose, title, isEditing}) => {
                                                                         variant="filled"
                                                                         margin="none"
                                                                         size="small"
-                                                                    />
+                                                                    /> */}
                                                                     <Autocomplete
+                                                                        aria-placeholder="dfs"
                                                                         options={searchResults}
                                                                         onInputChange={handleInputLoadUserChange}
                                                                         inputValue={keyword}
                                                                         loading={loadingUser}
                                                                         
-                                                                        renderInput={(params) => {
+                                                                        renderInput={(params) => 
                                                                             <TextField
                                                                                 {...params}
                                                                                 label="Nhập tên cán bộ coi thi"
-                                                                                variant="outlined"
+                                                                                variant="filled"
                                                                                 fullWidth
+                                                                                size="small"
                                                                                 InputProps={{
                                                                                     ...params.InputProps,
                                                                                     endAdornment: (
@@ -479,13 +481,9 @@ const DialogAddExam = ({isOpen, onClose, title, isEditing}) => {
                                                                                         </>
                                                                                     ),
                                                                                 }}
-                                                                            >
-                                                                                
-                                                                            </TextField>
-                                                                        }}
-                                                                    >
-
-                                                                    </Autocomplete>
+                                                                            /> 
+                                                                        }
+                                                                    />
                                                                 </Grid2>
                                                             </Grid2>
                                                         </AccordionDetails>
