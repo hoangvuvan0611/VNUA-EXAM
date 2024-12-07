@@ -21,6 +21,7 @@ import {
 import { FcCalendar, FcInfo, FcPlus } from "react-icons/fc";
 import { FcHome } from "react-icons/fc";
 import ExamRoomManagementTable from "../../components/admin/table/ExamRoomManagementTable";
+import RoomManagement from "./RoomManagement";
 
 const examData = [
   {
@@ -78,6 +79,8 @@ const RoomExamManagement = () => {
         >
             <MyAppBar label={"Quản lý phòng thi"} />
         </div>
+
+        <RoomManagement/>
 
         <Box sx={{mt: 1, mb: 3, display: 'flex', gap: 2, ml: 3, mr: 3}}>
             <Button 

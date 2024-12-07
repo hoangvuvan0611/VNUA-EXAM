@@ -12,6 +12,8 @@ import {
   ListItem,
   ListItemText,
   Button,
+  Tabs,
+  Tab,
 } from "@mui/material";
 import {
   ExpandMore as ExpandMoreIcon,
@@ -22,6 +24,7 @@ import { FcHome } from "react-icons/fc";
 import ExamManagementTable from "../../components/admin/table/ExamManagementTable";
 import { FcPlus } from "react-icons/fc";
 import DialogAddExam from "../../components/admin/dialog/DialogAddExam";
+import TabAddExam from "../../components/admin/tab/TabAddExam";
 
 const examData = [
   {
@@ -56,6 +59,7 @@ const ExamManagement = () => {
     // Xử lý mở dialog thêm mới kỳ thi
     const handleOpenDialogUploadFile = () => setIsOpenDialogAddExam(true);
     
+    const [ activeTab, setActiveTab ] = useState(0); // Mở tab
 
   return (
     <Box>
@@ -85,6 +89,8 @@ const ExamManagement = () => {
             Xuất Báo Cáo
             </Button>
         </Box>
+
+
 
         {examData.map((exam) => (
             <Accordion
@@ -165,7 +171,46 @@ const ExamManagement = () => {
                 </AccordionDetails>
             </Accordion>
         ))}
-        <ExamManagementTable title={"Danh sách kỳ thi đã hoàn thành"}/>
+
+        {/* Các tab như danh sách kỳ thi, thêm mới kỳ thi */}
+        <Tabs
+            value={activeTab} 
+            onChange={(e, newValue) => setActiveTab(newValue)}
+            sx={{ mb: 2 }}
+        >
+            <Tab  
+                label="Danh sách kỳ thi" 
+                sx={{
+                    backgroundColor: 'transparent',
+                    '&.Mui-selected': {
+                      backgroundColor: 'green',
+                      color: 'white',
+                    },
+                    borderRadius: '5px'
+                }}    
+            />
+            <Tab 
+                sx={{
+                    backgroundColor: 'transparent',
+                    '&.Mui-selected': {
+                        backgroundColor: 'green',
+                        color: 'white',
+                    },
+                    borderRadius: '5px'
+                }}
+                label="Thêm mới kỳ thi" 
+            />
+        </Tabs>
+
+        {/* Nội dung tab danh sách các kỳ thi */}
+        {activeTab === 0 && (
+            <ExamManagementTable title={"Danh sách kỳ thi đã hoàn thành"}/>
+        )}
+        
+        {/* Nội dung tab Thêm mới kỳ thi */}
+        {activeTab === 1 && (
+            <TabAddExam isOpen={isOpenDialogAddExam} onClose={handleCloseDialogUploadFile} title={"Thêm mới kỳ thi"}/>
+        )}
 
         {/* Dialog them moi ca thi */}
         <DialogAddExam isOpen={isOpenDialogAddExam} onClose={handleCloseDialogUploadFile} title={"Thêm mới kỳ thi"}/>

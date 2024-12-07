@@ -109,7 +109,6 @@ const DialogAddExam = ({isOpen, onClose, title, isEditing}) => {
         setPoetryList(poetryList.filter((_, i) => i !== index));
         setPoetryNum(poetryNum - 1);
         if (poetryNum - 1 === 0) {
-            alert("455");
             setIsDisabledInputExamNum(false);
         }
     }
@@ -144,7 +143,7 @@ const DialogAddExam = ({isOpen, onClose, title, isEditing}) => {
         });
     }
     const handleBlur = (value) => {
-        if (value.trim() === '') {
+        if (value.trim === '') {
             setErrors(true); // Hiển thị lỗi nếu trường bị để trống
         } else {
             setErrors(false);
@@ -162,9 +161,10 @@ const DialogAddExam = ({isOpen, onClose, title, isEditing}) => {
         setLoadingUser(true);
         try {
             const response = await api.get(
-                `user/usersByKeyword=${keyword}`
-            );    
-            console.log(keyword)
+                `/user/usersByKeyword=${keyword}`
+            );  
+            setSearchResult(response.data.dataList);
+            console.log(response.data.dataList)
         } catch (error) {
             toast.warning("Hệ thống đang gặp sự cố, vui lòng thử lại sau!", {
                 icon: "⚠️",
@@ -178,7 +178,8 @@ const DialogAddExam = ({isOpen, onClose, title, isEditing}) => {
         <Dialog
             open={isOpen}
             onClose={onClose}
-            maxWidth="70%"
+            maxWidth="80%"
+            maxHeight="90%"
             sx={{ "& .MuiDialog-paper": { borderRadius: "15px" } }}
         >
             <ToastContainer icon={true} />
