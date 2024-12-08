@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Autocomplete, Box, Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, Grid2, IconButton, InputLabel, keyframes, LinearProgress, List, ListItem, ListItemIcon, ListItemText, MenuItem, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Tooltip, Typography } from "@mui/material";
-import { FcFullTrash, FcHighPriority, FcPlus, FcRules } from "react-icons/fc";
+import { FcFullTrash, FcHighPriority, FcPlus, FcRules, FcSupport } from "react-icons/fc";
 import { ToastContainer, toast } from "react-toastify";
 import api from "../../../services/api/axios.config";
 import { LazyLoadImage } from "react-lazy-load-image-component";
-import examImage from '../../../assets/images/backgrounds/Exams-bro.svg'
+import examImage from '../../../assets/images/backgrounds/Exams-bro.svg';
+import { v4 as uuidv4 } from 'uuid';
 
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
@@ -12,13 +13,9 @@ import styled from "@emotion/styled";
 
 import {
     CloudUpload as CloudUploadIcon,
-    Info as InfoIcon,
     CheckCircleOutline,
     ErrorOutline,
     Article,
-    Delete,
-    KeyboardArrowDown,
-    KeyboardArrowUp,
 } from '@mui/icons-material';
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
@@ -51,6 +48,7 @@ const DialogAddRoom = ({open, onClose, title}) => {
     const [ subjectSelected, setSubjectSelected ] = useState([]); // Môn học được lựa chọn
     const [ typeAddStudent, setTpeAddStudent ] = useState(0); // Trạng thái cho loại thêm sinh viên, 0 là không hiện, 1 là nhập từng sinh viên, 2 là thêm từ file
     const [ examSet, setExamSet ] = useState([]); // Danh sách đề hoặc bộ đề
+    const [ isEditing, setIsEditing ] = useState(false); // trạng thái update sinh viên trong dang sách
     const [ newStudent, setNewStudent ] = useState({ // Đối tượng sinhg viên thêm mới
         id: "",
         studentCode: "",
@@ -84,6 +82,7 @@ const DialogAddRoom = ({open, onClose, title}) => {
     // Xử lý đóng Dialog
     const handleCloseDialog = () => { 
         onClose();
+        setIsEditing(false);
     };
 
     // Xử lý khi nhập input room 
@@ -104,6 +103,18 @@ const DialogAddRoom = ({open, onClose, title}) => {
         });
     }
 
+    const validateForm = () => {
+        let tempErrors = {};
+        tempErrors.studentCode = newStudent.studentCode ? "" : "Mã thí sinh là bắt buộc";
+        tempErrors.name = newStudent.name ? "" : "Họ tên thí sinh là bắt buộc";
+        tempErrors.dateOfBirth = newStudent.dateOfBirth
+          ? ""
+          : "Ngày sinh là bắt buộc";
+    
+        setErrors(tempErrors);
+        return Object.values(tempErrors).every((x) => x === "");
+    };
+
     // Xử lý chọn môn học
     const handleSubjectSelectedChange = (event) => {
         setSubjectSelected(event.target.value);
@@ -117,6 +128,61 @@ const DialogAddRoom = ({open, onClose, title}) => {
         setFile(null);
         setUploadError(null);
     };
+
+    // Xử lý sự kiện click button thêm mới sinh viên
+    // Xử lý khi nhập input room 
+    const handleInputStudentChange = (e) => {
+        let { name, value } = e.target;
+        setNewStudent((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+    const handleClickButtonAddStudent = (i) => {
+        if (!validateForm()) return;
+
+
+        if (isEditing) {    
+            setNewRoom({
+                ...newRoom,
+                studentList: newRoom.studentList.map((student, index) => 
+                    newStudent.id === student.id ? {
+                        ...student,
+                        ...newStudent
+                    } : student,
+                ),
+            });
+        } else {
+            setNewRoom({
+                ...newRoom,
+                studentList: [...newRoom.studentList, {
+                    id: uuidv4(),
+                    studentCode: newStudent.studentCode,
+                    name: newStudent.name,
+                    className: newStudent.className,
+                    dateOfBirth: newStudent.dateOfBirth,
+                    address: newStudent.address,
+                }],
+            });
+        }
+        setIsEditing(false);
+        setNewStudent({
+            id: "",
+            studentCode: "",
+            name: "",
+            className: "",
+            dateOfBirth: "",
+            address: "",
+        });
+    };
+    const handleDeleteStudent = (id) => { // Xử lý xóa student
+        setNewRoom({
+            ...newRoom,
+            studentList: newRoom.studentList.filter((student) => student.id !== id),
+        });
+    };
+
+
     const handleFileSelect = (event) => {
         setFile(event.target.files[0]);
     };
@@ -412,7 +478,7 @@ const DialogAddRoom = ({open, onClose, title}) => {
                     </Grid2>
 
                     {/* Area nhập hoặc import file sinh viên */}
-                    <Grid2 item component='form' size={{ xs: 12, md: 2.5}}>
+                    <Grid2 item size={{ xs: 12, md: 2.5}}>
                         { typeAddStudent === 0 && 
                             <LazyLoadImage 
                                 src={examImage}
@@ -420,15 +486,15 @@ const DialogAddRoom = ({open, onClose, title}) => {
                         }
                         {/* Nhập từng sinh viên */}
                         { typeAddStudent === 1 && 
-                            <Box>
+                            <Box component="form">
                                 <Box sx={{mb: 1.5}}>
                                     <TextField
                                         required
                                         fullWidth
-                                        label="Mã sinh viên"
+                                        label="Mã thí sinh"
                                         name="studentCode"
                                         value={newStudent.studentCode}
-                                        onChange={handleInputChange}
+                                        onChange={handleInputStudentChange}
                                         error={!!errors.studentCode}
                                         helperText={errors.studentCode}
                                         variant="filled"
@@ -452,7 +518,7 @@ const DialogAddRoom = ({open, onClose, title}) => {
                                         label="Họ và tên"
                                         name="name"
                                         value={newStudent.name}
-                                        onChange={handleInputChange}
+                                        onChange={handleInputStudentChange}
                                         error={!!errors.name}
                                         helperText={errors.name}
                                         variant="filled"
@@ -471,12 +537,11 @@ const DialogAddRoom = ({open, onClose, title}) => {
                                 </Box>
                                 <Box sx={{mb: 1.5}}>
                                     <TextField
-                                        required
                                         fullWidth
                                         label="Lớp"
                                         name="className"
                                         value={newStudent.className}
-                                        onChange={handleInputChange}
+                                        onChange={handleInputStudentChange}
                                         error={!!errors.className}
                                         helperText={errors.className}
                                         variant="filled"
@@ -501,7 +566,7 @@ const DialogAddRoom = ({open, onClose, title}) => {
                                         label="Ngày sinh"
                                         name="dateOfBirth"
                                         value={newStudent.dateOfBirth}
-                                        onChange={handleInputChange}
+                                        onChange={handleInputStudentChange}
                                         error={!!errors.dateOfBirth}
                                         helperText={errors.dateOfBirth}
                                         variant="filled"
@@ -521,12 +586,11 @@ const DialogAddRoom = ({open, onClose, title}) => {
                                 </Box>
                                 <Box sx={{mb: 1.5}}>
                                     <TextField
-                                        required
                                         fullWidth
                                         label="Quê quán"
                                         name="address"
                                         value={newStudent.address}
-                                        onChange={handleInputChange}
+                                        onChange={handleInputStudentChange}
                                         error={!!errors.address}
                                         helperText={errors.address}
                                         variant="filled"
@@ -549,8 +613,13 @@ const DialogAddRoom = ({open, onClose, title}) => {
                                     variant="outlined"
                                     sx={{ mr: 2, mb: 2, textTransform: 'capitalize' }}
                                     size="medium"
+                                    type="submit"
+                                    onClick={(e) => {
+                                        setIsEditing(false);
+                                        handleClickButtonAddStudent(e)
+                                    }}
                                 >
-                                    Lưu sinh viên 
+                                    {isEditing ? "Lưu thay đổi" : "Lưu sinh viên"} 
                                     <FcPlus style={{marginLeft: '10px'}}/>
                                 </Button>
                             </Box>
@@ -569,13 +638,15 @@ const DialogAddRoom = ({open, onClose, title}) => {
                                                 <FcHighPriority color="warning" size={20} />
                                             </Box>
                                             <Box>
-                                                <ListItemText primary="Kích thước tối đa: 10MB" />
+                                                <Typography variant="caption">
+                                                    Kích thước tối đa: 10MB
+                                                </Typography>
                                             </Box>
                                         </Box>
                                         <Box>
-                                            <Box>
-                                                <ListItemText primary={`Định dạng hỗ trợ: ${allowedFileTypes.join(', ')}`} />
-                                            </Box>
+                                            <Typography variant="caption">
+                                                Định dạng hỗ trợ: ${allowedFileTypes.join(', ')}
+                                            </Typography>
                                         </Box>
                                     </Box>
                                 </Box>
@@ -596,7 +667,7 @@ const DialogAddRoom = ({open, onClose, title}) => {
                                             animation: uploading ? `${uploadAnimation} 1s ease-in-out infinite` : 'none'
                                         }}
                                     />
-                                    <Typography variant="body1" color="text.secondary">
+                                    <Typography variant="subtitle2" color="text.secondary">
                                         Click để chọn file hoặc kéo thả file vào đây
                                     </Typography>
                                 </UploadBox>
@@ -692,31 +763,29 @@ const DialogAddRoom = ({open, onClose, title}) => {
                                                 <TableCell>{student.className}</TableCell>
                                                 <TableCell>{student.dateOfBirth}</TableCell>
                                                 <TableCell>{student.address}</TableCell>
-                                                {/* <TableCell align="center">
+                                                <TableCell align="center">
                                                     <Tooltip title="Xóa">
                                                         <IconButton
                                                             size="small"
                                                             color="error"
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                handleDelete(student.id);
-                                                            }}
+                                                            onClick={(e) => handleDeleteStudent(student.id)}
                                                         >
-                                                            <DeleteIcon fontSize="small" />
+                                                            <FcFullTrash fontSize="small" />
                                                         </IconButton>
                                                     </Tooltip>
                                                     <Tooltip title="Sửa">
                                                         <IconButton 
                                                             size="small" 
                                                             onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            handleEdit(student);
+                                                                setErrors({});
+                                                                setIsEditing(true);
+                                                                setNewStudent(student);
                                                             }}
                                                         >
-                                                            <EditIcon fontSize="small" />
+                                                            <FcSupport fontSize="small" />
                                                         </IconButton>
                                                     </Tooltip>
-                                                </TableCell> */}
+                                                </TableCell>
                                                 </TableRow>
                                             ))
                                         )
