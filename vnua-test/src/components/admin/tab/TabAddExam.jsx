@@ -146,7 +146,7 @@ const TabAddExam = ({isOpen, onClose, title, isEditing}) => {
 
     const [ isDisabledInputExamNum, setIsDisabledInputExamNum] = useState(false);
     const [ poetryNum, setPoetryNum ] = useState(null); 
-    const [ listUserData, setListUserData ] = useState([]);
+    const [ listUserData, setListUserData ] = useState([]); // Danh sách user
     const [ newExam, setNewExam ] = useState({ // Đối tượng chứa thông tin của  kỳ thi
         id: "",
         examCode: "",
