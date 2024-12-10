@@ -6,10 +6,10 @@ import ExamManagement from '../pages/admin/ExamManagement';
 import QuestionBank from '../pages/admin/QuestionBank';
 import StudentManagement from '../pages/admin/StudentManagement';
 import SubjectManagement from '../pages/admin/SubjectManagement';
-import ExamBank from '../pages/admin/ExamBank';
 import Setting from '../pages/admin/Setting';
 import PoetryManagement from '../pages/admin/PoetryManagement';
 import RoomExamManagement from '../pages/admin/RoomExamManagement';
+import ExamPaperBank from '../pages/admin/ExamPaperBank';
 
 function AdminRoutes() {
     return (
@@ -18,7 +18,7 @@ function AdminRoutes() {
                 <Route path='/' element={<Dashboard/>} />
                 <Route path='/students' element={<StudentManagement/>} />
                 <Route path='/subjects' element={<SubjectManagement/>} />
-                <Route path='/examBank' element={<ExamBank/>} />
+                <Route path='/examBank' element={<ExamPaperBank/>} />
                 <Route path="/users" element={<UserManagement />} />
                 <Route path="/exams" element={<ExamManagement />} />
                 <Route path="/poetry" element={<PoetryManagement />} />
