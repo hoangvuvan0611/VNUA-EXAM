@@ -168,10 +168,11 @@ const QuestionBank = () => {
         });
         return;
       }
+      console.log(response);
       setTotalElements(response.data.data.totalElements);
       setTotalPages(response.data.data.totalPages);
       setQuestionsData(response.data.data.content);
-      console.log(questionsData);
+
     } catch (error) {
       toast.warning("Hệ thống đang gặp sự cố, vui lòng thử lại sau!", {
         icon: "⚠️",

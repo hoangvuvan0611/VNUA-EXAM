@@ -26,8 +26,9 @@ const AppThemeProvider = ({children}) => {
                         main: '#ffffff'
                     },
                     background: {
-                        default: '#ffffff',
-                        hoverSideBar: '#efefef'
+                        default: '#f1f7ff',
+                        hoverSideBar: '#ffffff',
+                        sideBar: '#ffffff'
                     },
                     action: {
                         default: ''

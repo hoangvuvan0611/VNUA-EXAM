@@ -148,7 +148,7 @@ const Row = ({
         aria-checked={isSelected}
         tabIndex={-1}
         selected={isSelected}
-        key={row.question.id}
+        key={row.id}
         // sx={{
         //   backgroundColor: index % 2 === 0 ? '#F0FFF0' : '#ffffff', // Màu nền xen kẽ
         //   '&:hover': {
@@ -160,7 +160,7 @@ const Row = ({
           <Checkbox
             color="success"
             checked={isSelected}
-            onChange={(event) => handleClick(event, row.question.id)}
+            onChange={(event) => handleClick(event, row.id)}
             inputProps={{
               "aria-labelledby": labelId,
             }}
@@ -184,12 +184,12 @@ const Row = ({
             whiteSpace: "",
           }}
         >
-          {row.question.content}
+          {row.content}
         </TableCell>
-        <TableCell>{row.question.subjectName}</TableCell>
-        <TableCell>{row.question.chapterIndex}</TableCell>
-        <TableCell>{row.question.questionType}</TableCell>
-        <TableCell>{row.question.level}</TableCell>
+        <TableCell>{row.subjectName}</TableCell>
+        <TableCell>{row.chapterIndex}</TableCell>
+        <TableCell>{row.questionType}</TableCell>
+        <TableCell>{row.level}</TableCell>
         <TableCell>
           <Tooltip title="Sửa câu hỏi">
             <IconButton color="info" onClick={() => onEditQuestion(row.id)}>
@@ -231,8 +231,8 @@ const Row = ({
                     </TableCell>
                   </TableRow>
                 </TableHead>
-                <TableBody>
-                  {row.answers.map((answer, index) => (
+                {/* <TableBody>
+                  {row.map((answer, index) => (
                     <TableRow
                       key={index}
                       sx={{
@@ -248,7 +248,7 @@ const Row = ({
                       <TableCell>{answer.explanation}</TableCell>
                     </TableRow>
                   ))}
-                </TableBody>
+                </TableBody> */}
               </Table>
             </Box>
           </Collapse>
