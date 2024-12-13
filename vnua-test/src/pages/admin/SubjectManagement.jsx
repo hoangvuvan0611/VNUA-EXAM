@@ -1,14 +1,46 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import MyAppBar from "../../components/admin/appbar/MyAppBar";
-import { Avatar, Button, Card, CardContent, Grid2, IconButton, List, ListItem, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typography } from "@mui/material";
-// import { useTheme } from '@mui/material/styles';
+import { 
+    Avatar, 
+    Box, 
+    Button, 
+    Card, 
+    CardContent, 
+    Chip, 
+    Grid2, 
+    IconButton, 
+    List, 
+    ListItem, 
+    styled, 
+    Table, 
+    TableBody, 
+    TableCell, 
+    TableHead, 
+    TableRow, 
+    Tooltip, 
+    Typography 
+} from "@mui/material";
 import { green } from "@mui/material/colors";
 import { BookmarkBorderOutlined, Delete, EditNote } from "@mui/icons-material";
+import { FcAnswers, FcCommandLine, FcEngineering } from "react-icons/fc";
+import DialogAddSubject from "../../components/admin/dialog/DialogAddSubject";
+import api from "../../services/api/axios.config";
+import { ToastContainer, toast } from "react-toastify";
+
+const StyledCard = styled(Card)(({ theme }) => ({
+    border: '3px solid transparent',
+    transition: 'border-color 0.3s',
+    '&:hover': {
+      borderColor: '#2E8B57', // Màu viền khi hover
+    },
+  }));
+  
 
 const SubjectManagement = () => {
 
     // const theme = useTheme();
-
+    const [ subjectList, setSubjectList ] = useState([]);
+    const [ isOpenDialogAddSubject, setIsOpenDialogAddSubject ] = useState(false);
     const orderItems = [
         { name: 'Giới thiệu tổng quan', qty: 1, bookMark: true },
         { name: 'Hệ điều hành là gì', qty: 1, bookMark: true },
@@ -16,13 +48,147 @@ const SubjectManagement = () => {
         { name: 'Lập lịch cho CPU', qty: 1, bookMark: true },
     ];
 
+    const handleCloseDialogAddSubject = () => setIsOpenDialogAddSubject(false);
+
+    const handleOpenDialogAddSubject = () => setIsOpenDialogAddSubject(true);
+
     const totalAmount = orderItems.reduce((total, item) => total + item.qty, 0);
 
+    // Hàm tạo màu ngẫu nhiên
+    const getRandomColor = (subject) => {
+        const colors = [
+        "#FF5733", "green", "blue", 
+        ];
+        const index = subject.charCodeAt(0) % colors.length;
+        return colors[index];
+    };
+
+    // Lấy danh sách môn học
+    const fetchInitData = async () => {
+        try {
+            const response = await api.get(
+                `/subject/getListToShow/userId=`
+            );  
+
+            if (response.data.success === false) {
+                toast.error(`Lỗi khi tạo lấy danh sách môn học: ${response.data.message}`);
+            } 
+            setSubjectList(response.data.dataList)
+        } catch (error) {
+            toast.warning("Hệ thống đang gặp sự cố, vui lòng thử lại sau!", {
+                icon: "⚠️",
+            });
+            console.log(error)
+        }
+    }
+
+    useEffect(() => {
+        fetchInitData();
+    }, []);
+
     return (
-        <div className="subjectManagement" style={{position: 'relative'}}>
-            <div className="shadow-sm bg-white" style={{ position: 'sticky', top: 0, left: 0, right: 0, zIndex: 39 }}>
+        <Box className="subjectManagement" style={{position: 'relative'}}>
+            <ToastContainer icon={true} />
+            <Box className="shadow-sm bg-white" style={{ position: 'sticky', top: 0, left: 0, right: 0, zIndex: 39 }}>
                 <MyAppBar label={'Quản lý môn học'}/>
-            </div>
+            </Box>
+
+            <Box sx={{ml: 3, mr: 3, mt: 3}}>
+                <Button
+                    variant="contained"
+                    onClick={handleOpenDialogAddSubject}
+                >
+                    Thêm mới môn học
+                </Button>
+            </Box>
+
+            {/* Danh sách môn học */}
+            <Box sx={{ml: 3, mr: 3, mt: 3}}>
+                {subjectList.map((subject, index) => (
+                    <StyledCard 
+                        sx={{pl: 4, pr: 4, pt: 2, pb: 2, mb: 2, borderRadius: '10px', 
+                            '&:hover': {
+                                borderCollapse: 'green',
+                            },
+                        }} 
+                        key={index}
+                    >
+                        <Box display='flex' justifyContent='space-between' alignItems={'center'}>
+                            <Box display='flex' alignItems={'center'} sx={{width: '30%'}}>
+                                <Avatar 
+                                    variant="rounded"
+                                    sx={{bgcolor: `#F0F0F0`, width: '60px', height: '60px'}}
+                                ><FcCommandLine size={50} /></Avatar>
+                                <Box sx={{ml: 3, mr: 4}}>
+                                    <Typography
+                                        variant="h6"
+                                    >
+                                        {subject.subjectName}
+                                    </Typography>
+                                    <Typography
+                                        variant="caption"
+                                    >
+                                        Mã môn học: {subject.subjectCode}
+                                    </Typography>
+                                    <Box>
+                                        <Tooltip title="Quyền quản trị môn học">
+                                            <Chip
+                                                key={index}
+                                                label={subject.createdUser}
+                                            
+                                                sx={{backgroundColor: '#A8E6CF', borderRadius: '5px', color:"green", fontWeight: 'bold'}}
+                                            />
+                                        </Tooltip>
+                                    </Box>
+                                </Box>
+                            </Box>
+
+                            <Box sx={{width: '20%'}}>
+                                <Typography>
+                                    Số chương:
+                                </Typography>
+                                <Typography>
+                                    Số câu hỏi:
+                                </Typography>
+                                <Typography>
+                                    Số lượng đề:
+                                </Typography>
+                            </Box>
+
+                            <Box>
+                                <Box display={'flex'}>
+                                    <Tooltip title="Chỉnh sửa môn học">
+                                        <IconButton>
+                                            <FcEngineering />
+                                        </IconButton>
+                                    </Tooltip>
+                                    <Tooltip title="Xem chi tiết môn học">
+                                        <IconButton>
+                                            <FcAnswers />
+                                        </IconButton>
+                                    </Tooltip>
+                                </Box>
+                                <Box display={'flex'} alignItems={'center'}>
+                                    <Typography>
+                                        Trưởng bộ môn:
+                                    </Typography>
+
+                                </Box>
+                            </Box>
+
+                        </Box>
+                    </StyledCard>
+                ))}
+            </Box>
+
+            {/* Dialog them moi mon hoc */}
+            <DialogAddSubject 
+                open={isOpenDialogAddSubject} 
+                onClose={handleCloseDialogAddSubject} 
+                title={"Thêm mới môn học"}
+                refreshData={fetchInitData}
+            />
+
 
             {/* Welcome Section */}
             {/* <Grid2 sx={{ bgcolor: theme.palette.mode === 'dark' ? 'rgb(100, 150, 230)' : 'rgb(100, 150, 230)', height: 200, borderRadius: 2, p: 3, display: 'flex', 
@@ -41,7 +207,7 @@ const SubjectManagement = () => {
             </Grid2> */}
 
             {/* Subject Card session */}
-            <Grid2 container spacing={{ xs: 2, md: 3 }} sx={{ml: 3, mr: 3, mt: 3, mb: 3}}>
+            {/* <Grid2 container spacing={{ xs: 2, md: 3 }} sx={{ml: 3, mr: 3, mt: 3, mb: 3}}>
                 {Array.from(Array(6)).map((_, index) => (
                     <Grid2 key={index} size={{ xs: 12, sm: 6, md: 4, lg: 3, xl: 3}}>
                         <Card sx={{borderRadius: 2, boxShadow: 3, padding: 0}}>
@@ -114,8 +280,8 @@ const SubjectManagement = () => {
                         </Card>
                     </Grid2>
                 ))}
-            </Grid2>
-        </div>
+            </Grid2> */}
+        </Box>
     );
 }
 
