@@ -1,210 +1,230 @@
-import { useState, useMediaQuery } from "react";
-import { Box, Button, Checkbox, Container, FormControlLabel, Grid2, IconButton, InputAdornment, TextField, Typography } from "@mui/material";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useTheme } from "@emotion/react";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
-import GoogleIcon from '@mui/icons-material/Google';
+import "../../assets/styles/auth/Login.css";
+import api from "../../services/api/axios.config";
+import Cookies from "js-cookie";
 
-export default function Login() {
-  const [showPassword, setShowPassword] = useState(false);
+import { ToastContainer, toast } from "react-toastify";
+import { Box, Button, Typography } from "@mui/material";
+import "react-toastify/dist/ReactToastify.css";
 
-  const theme = useTheme();
-  // const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-
-  const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const [formData, setFormData] = useState({
-    username: "",
-    password: "",
-  });
-  const [error, setError] = useState("");
+const Login = ({ setLoggedIn }) => {
   const navigate = useNavigate();
+  const [isActive, setIsActive] = useState(false);
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+  const activeRegister = () => {
+    setIsActive(true);
+  };
+  const activeLogin = async () => {
+    setIsActive(false);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const [userName, setUserName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [ isStudent, setIsStudent ] = useState(true);
+
+  const validateUserInf = () => {
+    if (userName.trim().length < 1) {
+      toast.warning("Tên người dùng không được để trống!", {
+        icon: "⚠️",
+      });
+      setUserName("");
+      return;
+    }
+
+    // let regexEmail = new RegExp(
+    //   "^[0-9a-zA-Z]+\\w+@\\w+(\\.\\w+)*(\\.[a-zA-Z]{2,6})$"
+    // );
+    // if (!regexEmail.test(email)) {
+    //   toast.warning("Email không đúng định dạng!", {
+    //     icon: "⚠️",
+    //   });
+    //   return;
+    // }
+
+    if (password.trim().length < 8) {
+      toast.warning("Mật khẩu phải có ít nhất 8 ký tự!", {
+        icon: "⚠️",
+      });
+      return;
+    }
+
+    return true;
+  };
+
+  const registerUser = async () => {
+    if (validateUserInf()) {
+      let response = await api.post("/api/v1/auth/register", {
+        username: userName,
+        email: email,
+        password: password,
+      });
+      if (response.data.status == 201) {
+        setUserName("");
+        setEmail("");
+        setPassword("");
+        toast.success("Đăng ký thành công!", {
+          icon: "✅",
+        });
+        setIsActive(true);
+      } else if (response.data.status == 400) {
+        if (response.data.message == "Email already exists!") {
+          toast.warning("Email đã được đăng ký trước đó!", {
+            icon: "⚠️",
+          });
+        } else if (response.data.message == "Username already exists!") {
+          toast.warning("Username đã được đăng ký trước đó!", {
+            icon: "⚠️",
+          });
+        }
+      }
+    }
+  };
+
+  const login = async () => {
+    if (userName.trim().length < 1) {
+      toast.warning("Mã thí sinh không được để trống!", {
+        icon: "⚠️",
+      });
+      setUserName("");
+      return;
+    }
+
+    if (password.trim().length < 1) {
+      toast.warning("Mật khẩu không được để trống", {
+        icon: "⚠️",
+      });
+      return;
+    }
+
     try {
-      // Implement login logic here
-      navigate("/exams");
+      const response = await api.post(
+        "/api/v1/auth/login",
+        {
+          userName,
+          password,
+        },
+        { withCredentials: true }
+      );
+
+      if (response.data.success == true) {
+        // Lưu token vào cookies sau khi đăng nhập thành công
+        Cookies.set('token', response.data.data.accessToken, { secure: true, sameSite: 'strict' });
+        Cookies.set('refreshToken', response.data.data.refreshToken, { secure: true, sameSite: 'strict' });
+
+        setLoggedIn(true);
+        navigate("/schedule"); // Chuyển hướng về trang chủ sau khi đăng nhập
+      } else {
+        toast.warning("Thông tin đăng nhập không chính xác", {
+          icon: "⚠️",
+        });
+      }
     } catch (error) {
-      setError("Đăng nhập không thành công");
+      console.error("Error logging in", error);
     }
   };
 
   return (
-    <Grid2
-      sx={{
-        display: "flex",
-        flexDirection: "row",
-        height: "100vh",
-        bgcolor: "#EDEDED",
-      }}
-    >
-      {/* Left illustration */}
-      <Grid2 size={{md: 8}}>
-        <Box
-          sx={{
-            flex: 1,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            bgcolor: "#EDEDED",
-          }}
-        >
-          {/* Placeholder for illustration */}
-          <Box
-            sx={{
-              width: 300,
-              height: 300,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-around",
-            }}
-          >
-            <Box
-              sx={{
-                width: 80,
-                height: 160,
-                bgcolor: "#6A3BFF",
-                borderRadius: 2,
-              }}
+    <Box className="auth">
+      <ToastContainer icon={true} />
+      <Box
+        className={isActive ? "auth_container active" : "auth_container"}
+        id="container"
+      >
+        <Box className="form-container sign-up">
+          <form>
+            <Typography variant="h5" fontWeight="bold">
+              Đăng nhập
+            </Typography>
+            <div className="social-icons">
+            </div>
+            <Typography variant="caption">
+              Sử dụng tên đăng nhập hoặc email để đăng nhập
+            </Typography>
+            <input
+              type="text"
+              autoComplete="section-blue shipping name"
+              value={userName}
+              onInput={(e) => setUserName(e.target.value)}
+              id="registerUserName"
+              placeholder="Nhập tên đăng nhập hoặc email"
             />
-            <Box
-              sx={{
-                width: 60,
-                height: 120,
-                bgcolor: "#1C1C1C",
-                borderRadius: 2,
-              }}
+            <input
+              type="password"
+              autoComplete="section-blue shipping new-password"
+              value={password}
+              onInput={(e) => setPassword(e.target.value)}
+              id="registerPassword"
+              placeholder="Mật khẩu"
             />
-            <Box
-              sx={{
-                width: 100,
-                height: 100,
-                bgcolor: "#FF9900",
-                borderRadius: "50%",
-              }}
+            <Button type="button" onClick={registerUser}>
+              Đăng nhập
+            </Button>
+          </form>
+        </Box>
+        <Box className="form-container sign-in">
+          <form>
+            <Typography variant="h5" fontWeight="bold">
+              Đăng nhập
+            </Typography>
+            <Typography variant="subtitle2" sx={{ mb: 4 }}>
+              Hệ thống thi trắc nghiệm trực tuyến
+            </Typography>
+            <Typography variant="caption">
+              Đăng nhập ngay để làm bài thi
+            </Typography>
+            <input
+              type="text"
+              autoComplete="section-blue shipping name"
+              value={userName}
+              onInput={(e) => setUserName(e.target.value)}
+              id="loginUsername"
+              placeholder="Nhập mã thí sinh"
             />
-            <Box
-              sx={{
-                width: 80,
-                height: 80,
-                bgcolor: "#FFD700",
-                borderRadius: "50%",
-              }}
-            />
+            <Button onClick={login} sx={{ mt: 2 }}>
+              Đăng nhập
+            </Button>
+          </form>
+        </Box>
+        <Box className="toggle-container">
+          <Box className="toggle">
+            <Box className="toggle-panel toggle-left">
+              <Typography variant="subtitle1">
+                Đăng nhập với tư cách Sinh viên!
+              </Typography>
+              <Typography>
+                Nếu như bạn là sinh viên, hãy chuyển sang trang đăng nhập của
+                sinh viên để làm bài thi
+              </Typography>
+              <Button
+                className="button hidden"
+                id="login"
+                onClick={() => activeLogin()}
+              >
+                chuyển hướng
+              </Button>
+            </Box>
+            <Box className="toggle-panel toggle-right">
+              <Typography variant="subtitle1">
+                Đăng nhập với tư cách Giảng viên!
+              </Typography>
+              <Typography>
+                Chuyển sang trang đăng nhập của giảng viên ngay
+              </Typography>
+              <Button
+                className="button hidden"
+                id="register"
+                onClick={() => activeRegister()}
+              >
+                Chuyển hướng
+              </Button>
+            </Box>
           </Box>
         </Box>
-      </Grid2>
-
-      {/* Login form */}
-      <Grid2>
-        <Container
-          sx={{
-            flex: 1,
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            bgcolor: "#FFFFFF",
-            borderRadius: 4,
-            px: 4,
-            margin: 2
-            // px: isMobile ? 2 : 4, // Padding nhỏ hơn cho thiết bị di động
-          }}
-        >
-          <Typography variant="h4" fontWeight="bold" mb={2}>
-            Welcome back!
-          </Typography>
-          <Typography variant="body2" color="textSecondary" mb={3}>
-            Please enter your details
-          </Typography>
-          <Box component="form" sx={{ width: "100%", maxWidth: 400 }}>
-            <TextField
-              label="Email"
-              type="email"
-              fullWidth
-              variant="outlined"
-              margin="normal"
-            />
-            <TextField
-              label="Password"
-              type={showPassword ? "text" : "password"}
-              fullWidth
-              variant="outlined"
-              margin="normal"
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton onClick={handleClickShowPassword} edge="end">
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-            <FormControlLabel
-              control={<Checkbox defaultChecked />}
-              label="Remember me for 30 days"
-            />
-            <Typography
-              variant="body2"
-              color="primary"
-              sx={{ cursor: "pointer", float: "right", mb: 2 }}
-            >
-              Forgot password?
-            </Typography>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{
-                bgcolor: "#000000",
-                color: "#FFFFFF",
-                textTransform: "none",
-                height: "50px",
-                mb: 2,
-                "&:hover": { bgcolor: "#333333" },
-              }}
-            >
-              Log In
-            </Button>
-            <Button
-              fullWidth
-              variant="outlined"
-              startIcon={<GoogleIcon />}
-              sx={{
-                color: "#000000",
-                textTransform: "none",
-                height: "50px",
-                mb: 2,
-                border: "2px solid #000000",
-                "&:hover": { border: "2px solid #333333" },
-              }}
-            >
-              Log in with Google
-            </Button>
-            <Typography variant="body2" align="center">
-              Don’t have an account?{" "}
-              <Typography
-                component="span"
-                color="primary"
-                sx={{ cursor: "pointer" }}
-              >
-                Sign Up
-              </Typography>
-            </Typography>
-          </Box>
-        </Container>
-      </Grid2>
-    </Grid2>
+      </Box>
+    </Box>
   );
-}
+};
+
+export default Login;
