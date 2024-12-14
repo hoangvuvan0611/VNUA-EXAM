@@ -71,7 +71,7 @@ const DialogAddSubject = ({open, onClose, title, refreshData}) => {
     const handleSubmitSaveSubject = async () => {
         try {
             const response = await api.post(`/subject/create`, newSubject);
-            console.log(response.data.success)
+            
             if (response.data.success === false) {
                 toast.error(`Lỗi khi tạo mới môn học: ${response.data.message}`);
             }
@@ -86,7 +86,6 @@ const DialogAddSubject = ({open, onClose, title, refreshData}) => {
                 chapterList: [],
             });
             refreshData();
-            console.log(response)
         } catch (error) {
             toast.warning(`Hệ thống đang gặp sự cố, vui lòng thử lại sau!`, {
                 icon: "⚠️",

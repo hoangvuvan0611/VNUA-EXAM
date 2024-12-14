@@ -235,7 +235,7 @@ const EnhancedTable = ({studentData}) => {
       newSelected = newSelected.concat(selected, id);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
+    } else if (selectedIndex === selected?.length - 1) {
       newSelected = newSelected.concat(selected.slice(0, -1));
     } else if (selectedIndex > 0) {
       newSelected = newSelected.concat(
@@ -260,7 +260,7 @@ const EnhancedTable = ({studentData}) => {
   };
 
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - studentData.length) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - studentData?.length) : 0;
 
   const visibleRows = React.useMemo(
     () =>
@@ -277,7 +277,7 @@ const EnhancedTable = ({studentData}) => {
         label="Thu nhỏ danh sách"
       />
       <Paper sx={{ width: '100%', mb: 2 }}>
-        <EnhancedTableToolbar numSelected={selected.length} />
+        <EnhancedTableToolbar numSelected={selected?.length} />
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
@@ -285,12 +285,12 @@ const EnhancedTable = ({studentData}) => {
             size={dense ? 'small' : 'medium'}
           >
             <EnhancedTableHead
-              numSelected={selected.length}
+              numSelected={selected?.length}
               order={order}
               orderBy={orderBy}
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
-              rowCount={studentData.length}
+              rowCount={studentData?.length}
             />
             <TableBody>
               {visibleRows.map((row, index) => {
@@ -379,13 +379,13 @@ const EnhancedTable = ({studentData}) => {
         <TablePagination
           rowsPerPageOptions={[10, 25, 50, 100]}
           component="div"
-          count={studentData.length}
+          count={studentData?.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
           labelRowsPerPage="Số hàng mỗi trang:"
-          labelDisplayedRows={({ from, to, count }) => `${from} - ${to} trong tổng số ${count} sinh viên ,  Trang ${page + 1} trên ${Math.ceil(studentData.length / rowsPerPage)}`}
+          labelDisplayedRows={({ from, to, count }) => `${from} - ${to} trong tổng số ${count} sinh viên ,  Trang ${page + 1} trên ${Math.ceil(studentData?.length / rowsPerPage)}`}
         />
       </Paper>
     </Box>

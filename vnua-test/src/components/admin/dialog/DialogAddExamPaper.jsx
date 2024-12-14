@@ -34,6 +34,7 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
 const DialogAddExamPaper = ({open, onClose, title, username}) => {
 
     const [ errors, setErrors ] = useState({});
+    const [ isLoading, setIsLoading ] = useState(false);
     const [ questionList, setQuestionList ] = useState([]);
     const [ subjectList, setSubjectList ] = useState([]); // Danh sách môn học được lựa chọn
     const [ subjectSelected, setSubjectSelected ] = useState([]); // Môn học được lựa chọn
@@ -44,6 +45,7 @@ const DialogAddExamPaper = ({open, onClose, title, username}) => {
         timeDuration: "",
         subjectCode: "",
         questionList: [],
+        supervisoryList: [],
     });
 
     // Kiểm tra một dòng có được chọn không
@@ -52,6 +54,10 @@ const DialogAddExamPaper = ({open, onClose, title, username}) => {
     // Xử lý đóng dialog
     const handleCloseDialog = () => {
         onClose();
+        completeInput();
+    };
+
+    const completeInput = () => {
         setNewExamPaper({
             examPaperName: "",
             timeDuration: "",
@@ -61,7 +67,7 @@ const DialogAddExamPaper = ({open, onClose, title, username}) => {
         });
         setErrors({});
         setSubjectSelected(null);
-    };
+    }
 
     // Xử lý khi nhập input đề thi 
     const handleInputChange = (e) => {
@@ -86,11 +92,14 @@ const DialogAddExamPaper = ({open, onClose, title, username}) => {
             toast.warning("Hệ thống đang gặp sự cố, vui lòng thử lại sau!", {
                 icon: "⚠️",
             });
+        } finally {
+            setIsLoading(false);
         }
     };
 
     // Lấy danh sách cán bộ
     const fetchInitDataUser = async () => {
+        setIsLoading(true);
         try {
             const response = await api.get(
                 `/user/allUsername`
@@ -101,7 +110,7 @@ const DialogAddExamPaper = ({open, onClose, title, username}) => {
                 icon: "⚠️",
             });
         } finally {
-
+            setIsLoading(false);
         }
     }
 
@@ -128,28 +137,38 @@ const DialogAddExamPaper = ({open, onClose, title, username}) => {
             newSelected = selected.filter((item) => item !== id);
         }
         setSelected(newSelected);
+        setNewExamPaper({
+            ...newExamPaper,
+            questionList: newSelected,
+        });
     };
 
     // Xử lý chọn môn học
     // Xử lý sau khi chọn môn học, lấy danh sách câu hỏi
     const handleSubjectSelectedChange = async (event) => {
+        setIsLoading(true);
         setSubjectSelected(event.target.value);
         try {
             const response = await api.get(
-                `question/getListBySubjectCode/subjectCode=${subjectSelected}`
+                `question/getListBySubjectCode/subjectCode=${event.target.value}`
             );
+
+            if (response.data.success === false) {
+                throw new ErrorEvent();
+            }
 
             setNewExamPaper({
                 ...newExamPaper,
-                subjectCode: subjectSelected,
+                subjectCode: event.target.value,
             });
             setQuestionList(response.data.dataList);
-            console.log(response.data.dataList)
         } catch (error) {
             toast.warning("Hệ thống đang gặp sự cố, vui lòng thử lại sau!", {
                 icon: "⚠️",
             });
             console.log(error)
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -179,18 +198,26 @@ const DialogAddExamPaper = ({open, onClose, title, username}) => {
 
     // Xử lý lưu đề thi
     const handleSubmitSaveExamPaper = async () => {
+        setIsLoading(true); 
         try {
-            const response = await api.get(
-                `/subject/listToSelect/username=${username}`
+            const response = await api.post(
+                `/examPaper/create`,
+                newExamPaper
             );  
             if (response.data.success === false) {
+                toast.warning("Hệ thống đang gặp sự cố, vui lòng thử lại sau!", {
+                    icon: "⚠️",
+                });
                 return;
             }
-            setSubjectList(response.data.dataList);
+
+            completeInput();
         } catch (error) {
             toast.warning("Hệ thống đang gặp sự cố, vui lòng thử lại sau!", {
                 icon: "⚠️",
             });
+        } finally {
+            setIsLoading(false);
         }
     }
 
@@ -301,8 +328,8 @@ const DialogAddExamPaper = ({open, onClose, title, username}) => {
                                         <TextField {...params} 
                                             variant="filled"
                                             size="small"
-                                            label="Thêm cán bộ có quyền sử dụng đề thi" 
-                                            placeholder="Nhập tên cán bộ" 
+                                            label="Thêm người dùng có quyền sử dụng đề thi" 
+                                            placeholder="Nhập tên người dùng" 
                                             sx={{
                                                 '& .MuiInputBase-input::placeholder': {
                                                     fontSize: '0.8rem', // Thay đổi kích thước placeholder
@@ -339,7 +366,7 @@ const DialogAddExamPaper = ({open, onClose, title, username}) => {
                                         size="small"
                                         onChange={handleSubjectSelectedChange}
                                     >
-                                        {subjectList.map((subject) => (
+                                        {subjectList?.map((subject) => (
                                             <MenuItem value={subject.subjectCode}>{subject.subjectName}</MenuItem>
                                         ))}
                                     </Select>
@@ -349,7 +376,11 @@ const DialogAddExamPaper = ({open, onClose, title, username}) => {
                             {/* Hiển thị thông tin những câu hỏi đã chọn */}
                             <Box>
                                 {Object.entries(selectedCountByChapter).map(([chapter, count]) => (
-                                    <Typography key={chapter} variant="body2">
+                                    <Typography 
+                                        key={chapter} 
+                                        variant="subtitle2"
+                                        color="info"
+                                    >
                                         Chương {chapter}: {count} câu hỏi
                                     </Typography>
                                 ))}
