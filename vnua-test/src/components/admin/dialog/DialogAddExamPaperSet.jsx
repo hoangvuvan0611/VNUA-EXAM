@@ -31,20 +31,20 @@ import CheckBoxIcon from '@mui/icons-material/CheckBox';
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
-const DialogAddExamPaper = ({open, onClose, title, username, refreshExamPaper }) => {
+const DialogAddExamPaperSet = ({open, onClose, title, username, refreshExamPaper }) => {
 
     const [ errors, setErrors ] = useState({});
     const [ isLoading, setIsLoading ] = useState(false);
-    const [ questionList, setQuestionList ] = useState([]);
+    const [ examPaperList, setExamPaperList ] = useState([]);
     const [ subjectList, setSubjectList ] = useState([]); // Danh sách môn học được lựa chọn
     const [ subjectSelected, setSubjectSelected ] = useState([]); // Môn học được lựa chọn
     const [ selected, setSelected ] = useState([]); // Danh sách câu hỏi đã chọn 
     const [ listUserData, setListUserData ] = useState([]); // Danh sách cán bộ coi thi
-    const [ newExamPaper, setNewExamPaper ] = useState({
-        examPaperName: "",
+    const [ newExamPaperSet, setNewExamPaperSet ] = useState({
+        examPaperSetName: "",
         timeDuration: "",
         subjectCode: "",
-        questionList: [],
+        examPaperList: [],
         supervisoryList: [],
     });
 
@@ -58,11 +58,11 @@ const DialogAddExamPaper = ({open, onClose, title, username, refreshExamPaper })
     };
 
     const completeInput = () => {
-        setNewExamPaper({
-            examPaperName: "",
+        setNewExamPaperSet({
+            examPaperSetName: "",
             timeDuration: "",
             subjectCode: "",
-            questionList: [],
+            examPaperList: [],
             supervisoryList: [],
         });
         setErrors({});
@@ -73,7 +73,7 @@ const DialogAddExamPaper = ({open, onClose, title, username, refreshExamPaper })
     // Xử lý khi nhập input đề thi 
     const handleInputChange = (e) => {
         let { name, value } = e.target;
-        setNewExamPaper((prev) => ({
+        setNewExamPaperSet((prev) => ({
             ...prev,
             [name]: value,
         }));
@@ -96,6 +96,8 @@ const DialogAddExamPaper = ({open, onClose, title, username, refreshExamPaper })
         } finally {
             setIsLoading(false);
         }
+
+        // /examPaper/getList/subjectCode=
     };
 
     // Lấy danh sách cán bộ
@@ -115,10 +117,10 @@ const DialogAddExamPaper = ({open, onClose, title, username, refreshExamPaper })
         }
     }
 
-    // Xử lý chọn tất cả các câu hỏi 
+    // Xử lý chọn tất cả các đề thi
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-          const newSelected = questionList.map((n) => n.id);
+          const newSelected = examPaperList.map((n) => n.id);
           setSelected(newSelected);
           return;
         }
@@ -138,31 +140,31 @@ const DialogAddExamPaper = ({open, onClose, title, username, refreshExamPaper })
             newSelected = selected.filter((item) => item !== id);
         }
         setSelected(newSelected);
-        setNewExamPaper({
-            ...newExamPaper,
-            questionList: newSelected,
+        setNewExamPaperSet({
+            ...newExamPaperSet,
+            examPaperList: newSelected,
         });
     };
 
     // Xử lý chọn môn học
-    // Xử lý sau khi chọn môn học, lấy danh sách câu hỏi
+    // Xử lý sau khi chọn môn học, lấy danh sách đề thi
     const handleSubjectSelectedChange = async (event) => {
         setIsLoading(true);
         setSubjectSelected(event.target.value);
         try {
             const response = await api.get(
-                `question/getListBySubjectCode/subjectCode=${event.target.value}`
+                `/examPaper/getList/subjectCode=${event.target.value}`
             );
 
             if (response.data.success === false) {
                 throw new ErrorEvent();
             }
 
-            setNewExamPaper({
-                ...newExamPaper,
+            setNewExamPaperSet({
+                ...newExamPaperSet,
                 subjectCode: event.target.value,
             });
-            setQuestionList(response.data.dataList);
+            setExamPaperList(response.data.dataList);
         } catch (error) {
             toast.warning("Hệ thống đang gặp sự cố, vui lòng thử lại sau!", {
                 icon: "⚠️",
@@ -176,13 +178,13 @@ const DialogAddExamPaper = ({open, onClose, title, username, refreshExamPaper })
     // Xử lý hiển thị chi tiết loại câu hỏi đã chọn
     const getSelectedCountByChapter = () => {
         // Lọc danh sách câu hỏi theo danh sách selected
-        const selectedQuestions = questionList.filter((question) =>
-            selected.includes(question.id)
+        const selectedExamPapers = examPaperList.filter((examPaper) =>
+            selected.includes(examPaper.id)
         );
     
         // Nhóm theo chapterIndex và đếm số lượng
-        return selectedQuestions.reduce((acc, question) => {
-            const chapter = question.chapterIndex || "Ngoài"; // Trường hợp không có chapterIndex
+        return selectedExamPapers.reduce((acc, examPaper) => {
+            const chapter = examPaper.chapterIndex || "Ngoài"; // Trường hợp không có chapterIndex
             acc[chapter] = (acc[chapter] || 0) + 1;
             return acc;
         }, {});
@@ -191,8 +193,8 @@ const DialogAddExamPaper = ({open, onClose, title, username, refreshExamPaper })
 
     // Chọn danh sách cán bộ coi thi
     const addSupervisoryList = (supervisoryList) => {
-        setNewExamPaper({
-            ...newExamPaper,
+        setNewExamPaperSet({
+            ...newExamPaperSet,
             supervisoryList: supervisoryList,
         });
     }
@@ -201,9 +203,10 @@ const DialogAddExamPaper = ({open, onClose, title, username, refreshExamPaper })
     const handleSubmitSaveExamPaper = async () => {
         setIsLoading(true); 
         try {
+            console.log(newExamPaperSet)
             const response = await api.post(
-                `/examPaper/create`,
-                newExamPaper
+                `/examPaperSet/create`,
+                newExamPaperSet
             );  
             if (response.data.success === false) {
                 toast.warning("Hệ thống đang gặp sự cố, vui lòng thử lại sau!", {
@@ -212,7 +215,7 @@ const DialogAddExamPaper = ({open, onClose, title, username, refreshExamPaper })
                 return;
             }
 
-            toast.success("Thêm mới đề thi thành công!", {
+            toast.success("Thêm mới bộ đề thành công!", {
                 icon: "✅",
             });
             completeInput();
@@ -257,9 +260,9 @@ const DialogAddExamPaper = ({open, onClose, title, username, refreshExamPaper })
                                 <TextField
                                     required
                                     fullWidth
-                                    label="Tên đề thi"
-                                    name="examPaperName"
-                                    value={newExamPaper.examPaperName}
+                                    label="Tên bộ đề thi"
+                                    name="examPaperSetName"
+                                    value={newExamPaperSet.examPaperName}
                                     onChange={handleInputChange}
                                     error={!!errors.examPaperName}
                                     helperText={errors.examPaperName}
@@ -284,7 +287,7 @@ const DialogAddExamPaper = ({open, onClose, title, username, refreshExamPaper })
                                     type="number"
                                     label="Thời gian thi (phút)"
                                     name="timeDuration"
-                                    value={newExamPaper.timeDuration}
+                                    value={newExamPaperSet.timeDuration}
                                     onChange={handleInputChange}
                                     error={!!errors.timeDuration}
                                     helperText={errors.timeDuration}
@@ -333,7 +336,7 @@ const DialogAddExamPaper = ({open, onClose, title, username, refreshExamPaper })
                                         <TextField {...params} 
                                             variant="filled"
                                             size="small"
-                                            label="Thêm người dùng có quyền sử dụng đề thi" 
+                                            label="Thêm người dùng có quyền sử dụng bộ đề" 
                                             placeholder="Nhập tên người dùng" 
                                             sx={{
                                                 '& .MuiInputBase-input::placeholder': {
@@ -393,10 +396,10 @@ const DialogAddExamPaper = ({open, onClose, title, username, refreshExamPaper })
                         </Grid2>
                     </Grid2>
 
-                    {/* Bảng hiện danh sách câu hỏi để thêm mới đề thi */}
+                    {/* Bảng hiện danh sách đề thi để thêm mới bộ đề thi */}
                     <Grid2 item component='form' sx={{pl: 2}} size={{ xs: 12, md: 9}} >
                         <Typography variant="inherit" gutterBottom fontWeight={"bold"}>
-                                Danh sách câu hỏi, đã chọn {selected.length = 0 ? 0 : selected.length}
+                                Danh sách đề thi, đã chọn {selected.length = 0 ? 0 : selected.length}
                         </Typography>
                         <TableContainer component={Paper} variant="outlined" sx={{maxHeight: '70%', overflow: "visible"}}>
                             <Table 
@@ -411,11 +414,11 @@ const DialogAddExamPaper = ({open, onClose, title, username, refreshExamPaper })
                                             <Checkbox
                                                 color="success"
                                                 indeterminate={
-                                                selected.length > 0 && selected.length < questionList?.length
+                                                selected.length > 0 && selected.length < examPaperList?.length
                                                 }
                                                 checked={
-                                                    questionList?.length > 0 &&
-                                                    selected.length === questionList?.length
+                                                    examPaperList?.length > 0 &&
+                                                    selected.length === examPaperList?.length
                                                 }
                                                 onChange={handleSelectAllClick}
                                                 inputProps={{
@@ -426,14 +429,14 @@ const DialogAddExamPaper = ({open, onClose, title, username, refreshExamPaper })
                                         <TableCell>STT</TableCell>
                                         <TableCell
                                             width={300}
-                                        >Nội dung</TableCell>
-                                        <TableCell>Chương</TableCell>
-                                        <TableCell>Loại câu hỏi</TableCell>
+                                        >Tên đề thi</TableCell>
+                                        <TableCell>Thời lượng</TableCell>
+                                        <TableCell>Số câu hỏi</TableCell>
                                         <TableCell>Mức độ</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {questionList?.length === 0 ? (
+                                    {examPaperList?.length === 0 ? (
                                         <TableRow>
                                             <TableCell colSpan={7} align="center" >
                                                 Môn học chưa có câu hỏi hoặc chưa chọn môn học!
@@ -441,30 +444,30 @@ const DialogAddExamPaper = ({open, onClose, title, username, refreshExamPaper })
                                         </TableRow>
                                         ) 
                                         : (
-                                            questionList?.map((question, index) => (
+                                            examPaperList?.map((examPaper, index) => (
                                                 <TableRow 
                                                     hover
                                                     role="checkbox"
-                                                    aria-checked={isSelected(question.id)}
+                                                    aria-checked={isSelected(examPaper.id)}
                                                     tabIndex={-1}
-                                                    selected={isSelected(question.id)}
-                                                    key={question.id} 
+                                                    selected={isSelected(examPaper.id)}
+                                                    key={examPaper.id} 
                                                 >
                                                     <TableCell padding="checkbox">
                                                         <Checkbox
                                                             color="success"
-                                                            checked={isSelected(question.id)}
-                                                            onChange={(event) => handleClick(event, question.id)}
+                                                            checked={isSelected(examPaper.id)}
+                                                            onChange={(event) => handleClick(event, examPaper.id)}
                                                             inputProps={{
                                                                 "aria-labelledby": `enhanced-table-checkbox-${index}`,
                                                             }}
                                                         />
                                                     </TableCell>
                                                     <TableCell>{index + 1}</TableCell>
-                                                    <TableCell>{question.content}</TableCell>
-                                                    <TableCell>{question.chapterIndex}</TableCell>
-                                                    <TableCell>{question.questionType}</TableCell>
-                                                    <TableCell>{question.dateOfBirth}</TableCell>
+                                                    <TableCell>{examPaper.title}</TableCell>
+                                                    <TableCell>{examPaper.duration}</TableCell>
+                                                    <TableCell>{examPaper.questionNum}</TableCell>
+                                                    <TableCell>{examPaper.dateOfBirth}</TableCell>
                                                 </TableRow>
                                             ))
                                         )
@@ -485,7 +488,7 @@ const DialogAddExamPaper = ({open, onClose, title, username, refreshExamPaper })
                     size="medium"
                     onClick={handleSubmitSaveExamPaper}
                 >
-                    Lưu đề thi
+                    Lưu bộ đề
                 </Button>
                 <Button
                     onClick={handleCloseDialog}
@@ -502,4 +505,4 @@ const DialogAddExamPaper = ({open, onClose, title, username, refreshExamPaper })
     );
 }
 
-export default DialogAddExamPaper;
+export default DialogAddExamPaperSet;

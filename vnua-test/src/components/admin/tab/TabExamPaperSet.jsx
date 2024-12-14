@@ -1,34 +1,67 @@
-import React, {useState} from "react";
-import { Badge, Box, Button, Card, CardContent, Chip, Grid2, IconButton, InputAdornment, MenuItem, Select, TextField, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
+import { Box, Button, Card } from "@mui/material";
 import ExamPaperSetTable from "../table/ExamPaperSetTable";
-import ExamPaperView from "../view/ExamPaperView";
-import SearchIcon from '@mui/icons-material/Search';
-import FilterListIcon from "@mui/icons-material/FilterList";
+import DialogAddExamPaperSet from "../dialog/DialogAddExamPaperSet";
+import { toast, ToastContainer } from "react-toastify";
+import api from "../../../services/api/axios.config";
 
 const TabExamPaperSet = () => {
+    const [ isOpenDialogAddExamPaperTab, setIsOpenDialogAddExamPaperTab ] = useState(false);
+    const [ examPaperSetList, setExamPaperSetList ] = useState([]);
+    const [ isLoading, setIsLoading ] = useState(false);
 
-    const [filters, setFilters] = useState(["Design", "Regular", "Full time", "B2B"]);
-    const [location, setLocation] = useState("Anywhere");
-    const [sortBy, setSortBy] = useState("Date");
+    const handleCloseDialogAddExamPaperTab = () => setIsOpenDialogAddExamPaperTab(false);
+    const handleOpenDialogAddExamPaperTab = () => setIsOpenDialogAddExamPaperTab(true);
 
-    const handleRemoveFilter = (filter) => {
-    setFilters(filters.filter((item) => item !== filter));
-    };
+    // Xử lý lưu đề thi
+    const fetchInitDataExamPaper = async () => {
+        setIsLoading(true); 
+        try {
+            const response = await api.get(`/examPaperSet/getByUsername`);  
+            if (response.data.success === false) {
+                toast.warning("Hệ thống đang gặp sự cố, vui lòng thử lại sau!", {
+                    icon: "⚠️",
+                });
+            }
+            console.log(response)
+            setExamPaperSetList(response.data.dataList);
+        } catch (error) {
+            toast.warning("Hệ thống đang gặp sự cố, vui lòng thử lại sau!", {
+                icon: "⚠️",
+            });
+        } finally {
+            setIsLoading(false);
+        }
+    }
 
-    const handleClearFilters = () => {
-    setFilters([]);
-    };
+    useEffect(() => {
+        fetchInitDataExamPaper();
+    }, []);
 
     return (
         <Box sx={{mt: 2}}>
+            <ToastContainer icon={true} />
+            <Card sx={{p: 2}}>
+                <Button 
+                    variant="contained"
+                    color="success"
+                    sx={{textTransform: "capitalize"}}
+                    onClick={handleOpenDialogAddExamPaperTab}
+                >
+                    Thêm mới bộ đề
+                </Button>
+                <Button>
+
+                </Button>
+            </Card>
             {/* Khu vực thanh tác vụ, tìm kiếm, thêm mới, import ..... */}
 
-            <Box sx={{ padding: 1}}>
+
+            {/* <Box sx={{ padding: 1}}>
                 <Typography variant="h5" sx={{ marginBottom: 2 }}>
                 Job Board
                 </Typography>
 
-                {/* Filter Section */}
                 <Box
                     display="flex"
                     gap={2}
@@ -36,7 +69,6 @@ const TabExamPaperSet = () => {
                     flexWrap="wrap"
                     sx={{ marginBottom: 2 }}
                 >
-                    {/* Search Bar */}
                     <Box display="flex" alignItems="center" sx={{ flexGrow: 1 }}>
                     <TextField
                         placeholder="Nhập tên bộ đề để tìm kiếm"
@@ -49,7 +81,6 @@ const TabExamPaperSet = () => {
                     />
                     </Box>
 
-                    {/* Location Dropdown */}
                     <Box>
                     <Select
                         value={location}
@@ -64,15 +95,12 @@ const TabExamPaperSet = () => {
                     </Select>
                     </Box>
 
-                    {/* Filter Button with Badge */}
                     <IconButton color="primary">
                     <Badge badgeContent={filters.length} color="secondary">
                         <FilterListIcon />
                     </Badge>
                     </IconButton>
                 </Box>
-
-                {/* Active Filters */}
                 <Box display="flex" gap={1} flexWrap="wrap" alignItems="center">
                     {filters.map((filter, index) => (
                     <Chip
@@ -89,7 +117,6 @@ const TabExamPaperSet = () => {
                     )}
                 </Box>
 
-                {/* Result Info */}
                 <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ marginTop: 4 }}>
                     <Typography variant="body1">{`Tìm thấy 20 bộ đề có kết quả khớp!`}</Typography>
 
@@ -106,10 +133,19 @@ const TabExamPaperSet = () => {
                         </Select>
                     </Box>
                 </Box>
-            </Box>
+            </Box> */}
 
             {/* Bảng hiển thị danh sách bộ đề */}
-            <ExamPaperSetTable title={"Danh sách các bộ đề"}/>
+            <ExamPaperSetTable title={"Danh sách các bộ đề"} examPaperSetData={examPaperSetList}/>
+
+            {/* Dialog thêm mới bộ đề */}
+            <DialogAddExamPaperSet 
+                onClose={handleCloseDialogAddExamPaperTab} 
+                open={isOpenDialogAddExamPaperTab}
+                title="Thêm mới bộ đề thi"
+                username={JSON.parse(localStorage.getItem('user'))}
+                // refreshExamPaper={fetchInitDataExamPaper}
+            />
         </Box>
     );
 }

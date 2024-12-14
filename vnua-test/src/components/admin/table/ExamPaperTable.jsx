@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { 
     Box, 
     FormControlLabel, 
@@ -78,32 +78,6 @@ const headCells = [
   },
 ];
 
-// Helper functions
-const createData = (examPaperName, subjectName, questionNum, duration, createdUser, createdAt, updatedAt) => ({
-    examPaperName,
-    subjectName,
-    questionNum,
-    duration,
-    createdUser,
-    createdAt,
-    updatedAt,
-});
-
-// Sample data
-const rows = [
-  createData('6455435', '10:00 - 11:30', '5', '345', '01-01-2003', 'Hải Phòng', '01-01-2024 16:00:00'),
-  createData('4535534', '10:00 - 11:30', '6', '345', '01-01-2003', 'Hà Nội', '01-01-2024 16:00:00'),
-  createData('3453155', '10:00 - 11:30', '6', '14', '01-01-2003', 'Hải Dương', '01-01-2024 16:00:00'),
-  createData('3453495', '10:00 - 11:30', '7', '14', '01-01-2003', 'Nam Định', '01-01-2024 16:00:00'),
-  createData('8762344', '10:00 - 11:30', '5', '23', '01-01-2003', 'Cà Mau', '01-01-2024 16:00:00'),
-  createData('7868866', '10:00 - 11:30', '6', '34', '01-01-2003', 'Hải Phòng', '01-01-2024 16:00:00'),
-  createData('7978973', '10:00 - 11:30', '1', '13', '01-01-2003', 'Hải Phòng', '01-01-2024 16:00:00'),
-  createData('4353553', '10:00 - 11:30', '3', '34', '01-01-2003', 'Hải Phòng', '01-01-2024 16:00:00'),
-  createData('4353253', '10:00 - 11:30', '4', '14', '01-01-2003', 'Hải Phòng', '01-01-2024 16:00:00'),
-  createData('6455435', '10:00 - 11:30', '8', '123', '01-01-2003', 'Hải Phòng', '01-01-2024 16:00:00'),
-  // ... rest of your data
-];
-
 // Table Header Component
 const EnhancedTableHead = ({
   order,
@@ -156,7 +130,7 @@ EnhancedTableHead.propTypes = {
   rowCount: PropTypes.number.isRequired,
 };
 
-const ExamPaperTable = ({title}) => {
+const ExamPaperTable = ({title, examPaperData, refreshExamPaper }) => {
 
 
     const [order, setOrder] = React.useState(DEFAULT_ORDER);
@@ -185,8 +159,7 @@ const ExamPaperTable = ({title}) => {
       setDense(event.target.checked);
     };
   
-    const emptyRows =
-      page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - examPaperData?.length) : 0;
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -207,10 +180,10 @@ const ExamPaperTable = ({title}) => {
               order={order}
               orderBy={orderBy}
               onRequestSort={handleRequestSort}
-              rowCount={rows.length}
+              rowCount={examPaperData?.length}
             />
             <TableBody>
-              {rows.map((row, index) => {
+              {examPaperData?.map((row, index) => {
                 return (
                   <TableRow
                     hover
@@ -232,14 +205,14 @@ const ExamPaperTable = ({title}) => {
                         whiteSpace: ""
                       }}
                     >
-                      {row.examPaperName}
+                      {row.title}
                     </TableCell>
                     <TableCell align="left">{row.subjectName}</TableCell>
                     <TableCell align="left">{row.questionNum}</TableCell>
                     <TableCell align="left">{row.duration}</TableCell>
                     <TableCell align="left">{row.createdUser}</TableCell>
-                    <TableCell align="left">{row.createdAt}</TableCell>
-                    <TableCell align="left">{row.updatedAt}</TableCell>
+                    <TableCell align="left">{new Date(row.createdAt).toLocaleString()}</TableCell>
+                    <TableCell align="left">{new Date(row.updatedAt).toLocaleString()}</TableCell>
                     <TableCell>
                       <Tooltip title="Xem báo cáo">
                         <IconButton color="info">
@@ -275,7 +248,7 @@ const ExamPaperTable = ({title}) => {
         <TablePagination
           rowsPerPageOptions={[10, 25, 50, 100]}
           component="div"
-          count={rows.length}
+          count={examPaperData?.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
@@ -284,7 +257,7 @@ const ExamPaperTable = ({title}) => {
           labelDisplayedRows={({ from, to, count }) =>
             `${from} - ${to} trong tổng số ${count} sinh viên ,  Trang ${
               page + 1
-            } trên ${Math.ceil(rows.length / rowsPerPage)}`
+            } trên ${Math.ceil(examPaperData?.length / rowsPerPage)}`
           }
         />
       </Paper>

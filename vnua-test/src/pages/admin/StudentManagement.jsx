@@ -28,25 +28,15 @@ import DialogAddNew from "../../components/admin/dialog/DialogAddNew";
 import api from "../../services/api/axios.config";
 import { ToastContainer, toast } from "react-toastify";
 
-function createData(studentCode, name, classOfStudent, dateOfBirth, lastAction) {
-    return {
-        studentCode,
-        name,
-        classOfStudent,
-        dateOfBirth,
-        lastAction,
-    };
-}
-
 const StudentManagement = () => {
 
-    const theme = useTheme();
     const [ studentList, setStudentList ] = useState([]);
 
     // State cho dialog thêm mới câu hỏi từ file
     const [ openDialogUploadFile, setOpenDialogUploadFile ] = useState(false);
     const [ openDialogAddStudent, setOpenDialogAddStudent ] = useState()
     const [ selectedFile, setSelectedFile ] = useState(null);
+    const [ isLoading, setIsLoading ] = useState(false);
 
     // Xử lý mở dialog thêm mới sinh viên
     const handleOpenDialogAddStudent = () => setOpenDialogAddStudent(true);
@@ -66,9 +56,9 @@ const StudentManagement = () => {
         console.log(selectedFile)
     }
 
-
     // Lấy danh sách sinh viên
     const fetchInitData = async () => {
+        setIsLoading(true);
         try {
             const response = await api.get(
                 `/student/all`
@@ -84,6 +74,7 @@ const StudentManagement = () => {
             });
             console.log(error)
         }
+        setIsLoading(false);
     }
 
     useEffect(() => {
