@@ -15,12 +15,6 @@ import {
     keyframes,
     Tooltip,
     IconButton,
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableRow,
-    Collapse,
     Grid2,
 } from '@mui/material';
 import {
@@ -30,10 +24,9 @@ import {
     ErrorOutline,
     Article,
     Delete,
-    KeyboardArrowDown,
-    KeyboardArrowUp,
 } from '@mui/icons-material';
 import api from "../../../services/api/axios.config";
+import { ToastContainer, toast } from "react-toastify";
 
 // Style component vùng upload
 const UploadBox = styled(Box)(({ theme }) => ({
@@ -60,84 +53,12 @@ const uploadAnimation = keyframes`
     }
 `;
 
-// Component cho mỗi hàng có thể mở rộng
-const Row = ({ row, index, pages, rowsPerPage }) => {
-    const [open, setOpen] = useState(false);
-
-    return (
-        <>
-            <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
-                <TableCell>
-                    <IconButton
-                        size="small"
-                        onClick={() => setOpen(!open)}
-                    >
-                        {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
-                    </IconButton>
-                </TableCell>
-                <TableCell component="th" scope="row">
-                    {((pages) * rowsPerPage) + index + 1}
-                </TableCell>
-                <TableCell>{row.question}</TableCell>
-                <TableCell align="right">{row.answers?.length || 0} câu trả lời</TableCell>
-            </TableRow>
-            <TableRow>
-                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={4}>
-                    <Collapse in={open} timeout="auto" unmountOnExit>
-                        <Box sx={{ margin: 1 }}>
-                            <Typography variant="h6" gutterBottom component="div">
-                                Câu trả lời
-                            </Typography>
-                            <Table size="small">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>STT</TableCell>
-                                        <TableCell>Nội dung</TableCell>
-                                        <TableCell align="right">Đúng/Sai</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {row.answers?.map((answer, answerIndex) => (
-                                        <TableRow key={answerIndex}>
-                                            <TableCell>{answerIndex + 1}</TableCell>
-                                            <TableCell>{answer}</TableCell>
-                                            <TableCell align="right">
-                                                {answer.isCorrect ? (
-                                                    <CheckCircleOutline color="success" />
-                                                ) : (
-                                                    <ErrorOutline color="error" />
-                                                )}
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </Box>
-                    </Collapse>
-                </TableCell>
-            </TableRow>
-        </>
-    );
-};
-
-const DialogUploadFile = ({ open, onClose, title }) => {
+const DialogUploadFileQuestion = ({ open, onClose, title, refreshData }) => {
     const [file, setFile] = useState(null);
     const [uploading, setUploading] = useState(false);
     const [uploadError, setUploadError] = useState(null);
     const [uploadProgress, setUploadProgress] = useState(0);
     const [questions, setQuestions] = useState([]);
-
-    const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(10);
-
-    const handleChangePage = (event, newPage) => {
-        setPage(newPage);
-    };
-    
-    const handleChangeRowsPerPage = (event) => {
-        setRowsPerPage(+event.target.value);
-        setPage(0);
-    };
 
     const closeDialog = () => {
         onClose();
@@ -158,11 +79,9 @@ const DialogUploadFile = ({ open, onClose, title }) => {
         setFile(event.target.files[0]);
     };
 
-    const uploadFile = async () => {
-        setUploading(true);
-        setUploadProgress(0);
-        setUploadError(null);
 
+    // Luồng upload file
+    const uploadFile = async () => {
         const formData = new FormData();
         formData.append('file', file);
 
@@ -176,6 +95,20 @@ const DialogUploadFile = ({ open, onClose, title }) => {
         try {
             const response = await api.post('/file/readFileQuestion', formData, uploadConfig);
             setQuestions(response.data.dataList);
+
+            if (response.data.success === false) {
+                toast.error(`Lỗi khi tải danh sách câu hỏi lên: ${response.data.message}`);
+            }
+
+            toast.success("Tải danh sách câu hỏi từ file thành công!", {
+                icon: "✅",
+            });
+
+            setFile(null);
+            setUploading(false);
+            setUploadError(null);
+            setUploadProgress(0);
+            refreshData();
         } catch (error) {
             setUploadError("Có lỗi xảy ra khi tải lên. Vui lòng thử lại!");
         } finally {
@@ -184,12 +117,13 @@ const DialogUploadFile = ({ open, onClose, title }) => {
     };
 
     return (
-        <Dialog open={open} onClose={closeDialog} maxWidth={questions.length > 0 ? "" : "sm"} fullWidth>
+        <Dialog open={open} onClose={closeDialog} maxWidth={questions?.length > 0 ? "" : "sm"} fullWidth>
+            <ToastContainer icon={true} />
             <DialogTitle>
                 {title}
             </DialogTitle>
             <DialogContent>
-                <Grid2 container={questions.length > 0 ? true : false} spacing={1}>
+                <Grid2 container={questions?.length > 0 ? true : false} spacing={1}>
                     {/* Upload Section */}
                     <Grid2 item xs={12} md={3}>
                         <Box sx={{ mb: 1 }}>
@@ -290,67 +224,10 @@ const DialogUploadFile = ({ open, onClose, title }) => {
                             </Button>
                         </Box>
                     </Grid2>
-
-                    {/* Questions Table Section */}
-                    {/* {questions.length > 0 ? (
-                        <Grid item xs={12} md={9}>
-                            <Typography variant="body1" gutterBottom>
-                                Danh sách {questions.length} câu hỏi
-                            </Typography>
-                            <TableContainer component={Paper} sx={{ maxHeight: 420, overflow: 'auto' }}>
-                                <Table stickyHeader size="small">
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell />
-                                            <TableCell sx={{fontWeight: 'bold'}}>STT</TableCell>
-                                            <TableCell sx={{fontWeight: 'bold'}}>Câu hỏi</TableCell>
-                                            <TableCell align="right" sx={{fontWeight: 'bold'}}>trả lời</TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {questions
-                                            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                            .map((question, index) => (
-                                            <Row key={index} row={question} index={index} pages={page} rowsPerPage={rowsPerPage}/>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                            <TablePagination
-                                rowsPerPageOptions={[10, 25, 100]}
-                                component="div"
-                                count={questions.length}
-                                rowsPerPage={rowsPerPage}
-                                page={page}
-                                onPageChange={handleChangePage}
-                                onRowsPerPageChange={handleChangeRowsPerPage}
-                                labelRowsPerPage="Số hàng mỗi trang"
-                                labelDisplayedRows={({ from, to, count }) => `${from} - ${to} trong tổng số ${count} sinh viên ,  Trang ${page + 1} trên ${Math.ceil(questions.length / rowsPerPage)}`}
-                            />
-                            <DialogActions>
-                                <Button
-                                    onClick={closeDialog}
-                                    color="primary"
-                                    variant="contained"
-                                    sx={{ mr: 2 }}
-                                >
-                                Xong
-                                </Button>
-                                    <Button
-                                    onClick={closeDialog}
-                                    color="primary"
-                                    variant="contained"
-                                    sx={{ mr: 2 }}
-                                    >
-                                    Hủy
-                                </Button>
-                            </DialogActions>
-                        </Grid>
-                    ) : null} */}
                 </Grid2>
             </DialogContent>
         </Dialog>
     );
 };
 
-export default DialogUploadFile;
+export default DialogUploadFileQuestion;

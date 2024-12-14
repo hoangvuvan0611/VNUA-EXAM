@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import MyAppBar from "../../components/admin/appbar/MyAppBar";
 import EnhancedTable from "../../components/admin/table/EnhancedTable";
 
@@ -23,8 +23,10 @@ import {
 } from '@mui/icons-material';
 
 import { useTheme } from '@mui/material/styles';
-import DialogUploadFile from "../../components/admin/dialog/DialogUploadFile";
+import DialogUploadFile from "../../components/admin/dialog/DialogUploadFileQuestion";
 import DialogAddNew from "../../components/admin/dialog/DialogAddNew";
+import api from "../../services/api/axios.config";
+import { ToastContainer, toast } from "react-toastify";
 
 function createData(studentCode, name, classOfStudent, dateOfBirth, lastAction) {
     return {
@@ -39,6 +41,7 @@ function createData(studentCode, name, classOfStudent, dateOfBirth, lastAction) 
 const StudentManagement = () => {
 
     const theme = useTheme();
+    const [ studentList, setStudentList ] = useState([]);
 
     // State cho dialog thêm mới câu hỏi từ file
     const [ openDialogUploadFile, setOpenDialogUploadFile ] = useState(false);
@@ -63,11 +66,33 @@ const StudentManagement = () => {
         console.log(selectedFile)
     }
 
+
+    // Lấy danh sách sinh viên
+    const fetchInitData = async () => {
+        try {
+            const response = await api.get(
+                `/student/all`
+            );  
+
+            if (response.data.success === false) {
+                toast.error(`Lỗi khi tạo lấy danh sách sinh viên: ${response.data.message}`);
+            } 
+            setStudentList(response.data.dataList)
+        } catch (error) {
+            toast.warning("Hệ thống đang gặp sự cố, vui lòng thử lại sau!", {
+                icon: "⚠️",
+            });
+            console.log(error)
+        }
+    }
+
+    useEffect(() => {
+        fetchInitData();
+    },[]);
+
     return (
         <Box className="" style={{position: 'relative'}}>
-            <div className="shadow-sm bg-white" style={{ position: 'sticky', top: 0, left: 0, right: 0, zIndex: 39 }}>
-                <MyAppBar label={'Quản lý sinh viên, lớp'}/>
-            </div>
+            <ToastContainer icon={true} />
 
             {/* Classes Section */}
             <Box sx={{ml: 3, mr: 3, mt: 2 }}>
@@ -171,7 +196,7 @@ const StudentManagement = () => {
 
             {/* Lessons Section */}
             <Box sx={{ml: 3, mr: 3 }}>
-                <EnhancedTable/>
+                <EnhancedTable studentData={studentList}/>
             </Box>
             <DialogUploadFile open={openDialogUploadFile} onClose={handleCloseDialogUploadFile} title={"Tải lên file danh sách sinh viên"}/>
 

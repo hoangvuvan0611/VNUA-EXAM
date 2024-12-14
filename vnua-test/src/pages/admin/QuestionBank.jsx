@@ -24,7 +24,7 @@ import {
   FileDownload as FileDownloadIcon,
   Translate,
 } from "@mui/icons-material";
-import DialogUploadFile from "../../components/admin/dialog/DialogUploadFile";
+import DialogUploadFile from "../../components/admin/dialog/DialogUploadFileQuestion";
 import QuestionAnswerTable from "../../components/admin/table/QuestionAnswerTable";
 import api from "../../services/api/axios.config";
 import { ToastContainer, toast } from "react-toastify";
@@ -68,11 +68,6 @@ const QuestionBank = () => {
     // Đặt lại giá trị của file khi đóng hộp thoại
     setSelectedFile(null);
   };
-
-  // State cho tìm kiếm và lọc
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filterSubject, setFilterSubject] = useState("all");
-  const [filterLevel, setFilterLevel] = useState("all");
 
   // State cho form câu hỏi mới
   const [formData, setFormData] = useState({
@@ -142,14 +137,6 @@ const QuestionBank = () => {
     setQuestions(questions.filter((q) => q.id !== id));
   };
 
-  // Lọc câu hỏi
-  // const filteredQuestions = questions.filter(question => {
-  //     const matchesSearch = question.content.toLowerCase().includes(searchTerm.toLowerCase());
-  //     const matchesSubject = filterSubject === 'all' || question.subject === filterSubject;
-  //     const matchesLevel = filterLevel === 'all' || question.level === filterLevel;
-  //     return matchesSearch && matchesSubject && matchesLevel;
-  // });
-
   const [questionsData, setQuestionsData] = useState([]);
   const [loadingData, setLoadingData] = useState(true);
   const [totalElements, setTotalElements] = useState(0);
@@ -160,7 +147,7 @@ const QuestionBank = () => {
     setLoadingData(true);
     try {
       const response = await api.get(
-        "/question/allBy?page=0&sort=id,asc&size=20&sort=content,desc"
+      `/question/allBy?page=0&sort=id,asc&size=20&sort=content,desc`
       );
       if (response.data.success === false) {
         toast.warning(`${response.data.message}`, {
@@ -168,11 +155,9 @@ const QuestionBank = () => {
         });
         return;
       }
-      console.log(response);
       setTotalElements(response.data.data.totalElements);
       setTotalPages(response.data.data.totalPages);
       setQuestionsData(response.data.data.content);
-
     } catch (error) {
       toast.warning("Hệ thống đang gặp sự cố, vui lòng thử lại sau!", {
         icon: "⚠️",
@@ -220,12 +205,6 @@ const QuestionBank = () => {
   return (
     <div style={{ position: "relative" }}>
       <ToastContainer icon={true} />
-      <div
-        className="shadow-sm"
-        style={{ position: "sticky", top: 0, left: 0, right: 0, zIndex: 39 }}
-      >
-        <MyAppBar label={"Quản lý Ngân hàng Câu hỏi"} />
-      </div>
 
       <Box sx={{ p: 3 }}>
         {/* Thanh tác vụ */}
@@ -466,6 +445,7 @@ const QuestionBank = () => {
           open={openDialogUploadFile}
           onClose={handleCloseDialogUploadFile}
           title={"Tải lên file câu hỏi"}
+          refreshData={fetchInitData}
         />
       </Box>
     </div>

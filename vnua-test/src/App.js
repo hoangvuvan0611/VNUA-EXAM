@@ -1,5 +1,5 @@
 import './App.css';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import AdminRoutes from './routers/AdminRoutes';
 import ExamRoutes from './routers/ExamRoutes';
 import './assets/styles/Global.css';
@@ -9,8 +9,6 @@ import PrivateRoute from './routers/PrivateRoute';
 import Login from './pages/auth/Login';
 
 function App() {
-
-
   return (
     <Router>
       <Routes>

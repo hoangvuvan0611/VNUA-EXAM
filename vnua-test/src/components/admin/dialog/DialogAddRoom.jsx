@@ -35,12 +35,13 @@ const UploadBox = styled(Box)(({ theme }) => ({
 
 const DialogAddRoom = ({open, onClose, title}) => {
 
-    const [file, setFile] = useState(null);
-    const [uploading, setUploading] = useState(false);
-    const [uploadError, setUploadError] = useState(null);
-    const [uploadProgress, setUploadProgress] = useState(0);
-    const [questions, setQuestions] = useState([]);
+    const [ file, setFile ] = useState(null);
+    const [ uploading, setUploading ] = useState(false);
+    const [ uploadError, setUploadError ] = useState(null);
+    const [ uploadProgress, setUploadProgress ] = useState(0);
+    const [ questions, setQuestions ] = useState([]);
     const allowedFileTypes = ['.xls', '.xlsx', '.json', '.csv']; // Danh sách loại file được hỗ trợ
+    const [ user, setUser ] = useState(null);
 
     const [ errors, setErrors ] = useState({});
     const [ listUserData, setListUserData ] = useState([]); // Danh sách cán bộ coi thi
@@ -211,7 +212,6 @@ const DialogAddRoom = ({open, onClose, title}) => {
         }
     };
 
-
     // Lấy danh sách cán bộ
     const fetchInitData = async () => {
         try {
@@ -228,8 +228,24 @@ const DialogAddRoom = ({open, onClose, title}) => {
         }
     }
 
+    const getSubjectData = async () => {
+        try {
+            const response = await api.get(
+                `/subject/listToSelect/username=${user}`
+            );  
+            setSubjectList(response.data.dataList);
+        } catch (error) {
+            toast.warning("Hệ thống đang gặp sự cố, vui lòng thử lại sau!", {
+                icon: "⚠️",
+            });
+        }
+    }
+
     useEffect(() => {
         fetchInitData();
+        getSubjectData();
+        const storedUser = localStorage.getItem('user');
+        setUser(JSON.parse(storedUser));
     },[]);
     
     return (
@@ -393,9 +409,9 @@ const DialogAddRoom = ({open, onClose, title}) => {
                                     size="small"
                                     onChange={handleSubjectSelectedChange}
                                 >
-                                    <MenuItem value={10}>Ten hoang vu van hoang chinh la sieu nhan anh hung</MenuItem>
-                                    <MenuItem value={20}>Twenty</MenuItem>
-                                    <MenuItem value={30}>Thirty</MenuItem>
+                                    {subjectList.map((subject) => (
+                                        <MenuItem value={subject.id}>{subject.subjectName}</MenuItem>
+                                    ))}
                                 </Select>
                             </FormControl>
                         </Box>

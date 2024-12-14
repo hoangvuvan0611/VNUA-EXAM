@@ -5,27 +5,17 @@ import {
     Box, 
     Button, 
     Card, 
-    CardContent, 
-    Chip, 
-    Grid2, 
+    Chip,  
     IconButton, 
-    List, 
-    ListItem, 
     styled, 
-    Table, 
-    TableBody, 
-    TableCell, 
-    TableHead, 
-    TableRow, 
     Tooltip, 
     Typography 
 } from "@mui/material";
-import { green } from "@mui/material/colors";
-import { BookmarkBorderOutlined, Delete, EditNote } from "@mui/icons-material";
-import { FcAnswers, FcCommandLine, FcEngineering } from "react-icons/fc";
+import { FcAnswers, FcCommandLine, FcEngineering, FcVoicePresentation } from "react-icons/fc";
 import DialogAddSubject from "../../components/admin/dialog/DialogAddSubject";
 import api from "../../services/api/axios.config";
 import { ToastContainer, toast } from "react-toastify";
+import { FcLock } from "react-icons/fc";
 
 const StyledCard = styled(Card)(({ theme }) => ({
     border: '3px solid transparent',
@@ -41,27 +31,11 @@ const SubjectManagement = () => {
     // const theme = useTheme();
     const [ subjectList, setSubjectList ] = useState([]);
     const [ isOpenDialogAddSubject, setIsOpenDialogAddSubject ] = useState(false);
-    const orderItems = [
-        { name: 'Giới thiệu tổng quan', qty: 1, bookMark: true },
-        { name: 'Hệ điều hành là gì', qty: 1, bookMark: true },
-        { name: 'Quản lý tiến trình', qty: 2, bookMark: true },
-        { name: 'Lập lịch cho CPU', qty: 1, bookMark: true },
-    ];
+    const [ isOpenDialogAddTeacher, setIsOpenDialogAddTeacher ] = useState(false);
 
     const handleCloseDialogAddSubject = () => setIsOpenDialogAddSubject(false);
 
     const handleOpenDialogAddSubject = () => setIsOpenDialogAddSubject(true);
-
-    const totalAmount = orderItems.reduce((total, item) => total + item.qty, 0);
-
-    // Hàm tạo màu ngẫu nhiên
-    const getRandomColor = (subject) => {
-        const colors = [
-        "#FF5733", "green", "blue", 
-        ];
-        const index = subject.charCodeAt(0) % colors.length;
-        return colors[index];
-    };
 
     // Lấy danh sách môn học
     const fetchInitData = async () => {
@@ -70,6 +44,7 @@ const SubjectManagement = () => {
                 `/subject/getListToShow/userId=`
             );  
 
+            console.log(response)
             if (response.data.success === false) {
                 toast.error(`Lỗi khi tạo lấy danh sách môn học: ${response.data.message}`);
             } 
@@ -89,9 +64,6 @@ const SubjectManagement = () => {
     return (
         <Box className="subjectManagement" style={{position: 'relative'}}>
             <ToastContainer icon={true} />
-            <Box className="shadow-sm bg-white" style={{ position: 'sticky', top: 0, left: 0, right: 0, zIndex: 39 }}>
-                <MyAppBar label={'Quản lý môn học'}/>
-            </Box>
 
             <Box sx={{ml: 3, mr: 3, mt: 3}}>
                 <Button
@@ -140,6 +112,7 @@ const SubjectManagement = () => {
                                             />
                                         </Tooltip>
                                     </Box>
+                                    
                                 </Box>
                             </Box>
 
@@ -167,19 +140,42 @@ const SubjectManagement = () => {
                                             <FcAnswers />
                                         </IconButton>
                                     </Tooltip>
+                                    <Tooltip title="Thêm mới giảng viên cho môn học">
+                                        <IconButton>
+                                            <FcVoicePresentation />
+                                        </IconButton>
+                                    </Tooltip>
+                                    <Tooltip title="Khóa môn học">
+                                        <IconButton>
+                                            <FcLock />
+                                        </IconButton>
+                                    </Tooltip>
                                 </Box>
-                                <Box display={'flex'} alignItems={'center'}>
-                                    <Typography>
-                                        Trưởng bộ môn:
-                                    </Typography>
-
-                                </Box>
+                                <Typography
+                                    variant="body2"
+                                >
+                                   Người tạo: {subject.createdUser}
+                                </Typography>
+                                <Typography
+                                    variant="body2"
+                                    color="info"
+                                >
+                                   Ngày tạo: {new Date(subject.createdAt).toLocaleString()}
+                                </Typography>
+                                <Typography
+                                    variant="body2"
+                                    color="info"
+                                >
+                                  Cập nhật cuối: {new Date(subject.updatedAt).toLocaleString()}
+                                </Typography>
                             </Box>
 
                         </Box>
                     </StyledCard>
                 ))}
             </Box>
+
+            {/* Dialog them moi giang vien cho mon hoc */}
 
             {/* Dialog them moi mon hoc */}
             <DialogAddSubject 

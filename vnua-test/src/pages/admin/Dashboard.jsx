@@ -1,7 +1,5 @@
 import { Avatar, AvatarGroup, Box, Grid2, IconButton, Stack, Tooltip, Typography } from "@mui/material";
 import { Card } from "@mui/material";
-import EventNoteIcon from '@mui/icons-material/EventNote';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import logoWorking from '../../assets/images/logos/Working-bro.svg';
 
 import React, { useState, useEffect } from "react";
@@ -57,6 +55,7 @@ const Dashboard = () => {
     const [ collectionExamNum, setCollectionExamNum ] = useState(0);
     const [ studentCount, setStudentCount ] = useState(0);
     const [ roomExamNum, setRoomExamNum ] = useState(0);
+    const [ user, setUser ] = useState(null);
 
 
     // Lấy data chứa dữ liệu tổng quan
@@ -79,20 +78,20 @@ const Dashboard = () => {
     } 
     useEffect(() => {
         fetchInitData();
+
+        const storedUser = localStorage.getItem('user');
+        setUser(JSON.parse(storedUser));
     }, []);
 
     return (
         <Box className="dashboard" style={{position: 'relative', backgroundColor: theme.palette.background.default}}>
             <ToastContainer icon={true} />
-            <Box className="shadow-sm" style={{ position: 'sticky', top: 0, left: 0, right: 0, zIndex: 39 }}>
-                <MyAppBar label={'Trang tổng quan'}/>
-            </Box>
 
             {/* Welcome Section */}
             <Grid2 sx={{ bgcolor: theme.palette.mode === 'dark' ? 'rgb(224, 255, 226, 0.3)' : 'rgb(224, 255, 226)', height: 200, borderRadius: 2, p: 3, display: 'flex', 
                 alignItems: 'center', mt: 4, mb: 4, position: 'relative', ml: 3, mr: 3 }}>
                 <Grid2 sx={{marginLeft: 10, xs: 12, md: 3}}>
-                    <Typography variant="h4" fontWeight="bold">Chào, Hoàng</Typography>
+                    <Typography variant="h4" fontWeight="bold">Chào, {user}</Typography>
                     <Typography variant="subtitle1" color="textSecondary">Sẵn sàng để hoàn thành công việc của bạn ngày hôm nay?</Typography>
                 </Grid2>
                 <Grid2 component="img" src={logoWorking} alt="Illustration" className="sm-hide"

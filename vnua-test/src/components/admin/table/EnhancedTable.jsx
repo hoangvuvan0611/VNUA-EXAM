@@ -76,17 +76,6 @@ const headCells = [
   },
 ];
 
-// Helper functions
-const createData = (id, studentCode, name, className, dateOfBirth, address, lastAction) => ({
-    id,
-    studentCode,
-    name,
-    className,
-    dateOfBirth,
-    address,
-    lastAction,
-});
-
 const descendingComparator = (a, b, orderBy) => {
   if (b[orderBy] < a[orderBy]) return -1;
   if (b[orderBy] > a[orderBy]) return 1;
@@ -98,46 +87,6 @@ const getComparator = (order, orderBy) =>
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy);
 
-// Sample data
-const rows = [
-  createData('6455435', '6455435', 'A', 'K66CNPMA', '01-01-2003', 'Hải Phòng', '01-01-2024 16:00:00'),
-  createData('4535534', '4535534', 'B', 'K66CNPMA', '01-01-2003', 'Hà Nội', '01-01-2024 16:00:00'),
-  createData('3453155', '3453155', 'C', 'K66CNPMA', '01-01-2003', 'Hải Dương', '01-01-2024 16:00:00'),
-  createData('3453495', '3453495', 'D', 'K66CNPMA', '01-01-2003', 'Nam Định', '01-01-2024 16:00:00'),
-  createData('8762344', '8762344', 'E', 'K66CNPMA', '01-01-2003', 'Cà Mau', '01-01-2024 16:00:00'),
-  createData('7868866', '7868866', 'F', 'K66CNPMA', '01-01-2003', 'Hải Phòng', '01-01-2024 16:00:00'),
-  createData('7978973', '7978973', 'G', 'K66CNPMA', '01-01-2003', 'Hải Phòng', '01-01-2024 16:00:00'),
-  createData('4353553', '4353553', 'H', 'K66CNPMA', '01-01-2003', 'Hải Phòng', '01-01-2024 16:00:00'),
-  createData('4353253', '4353253', 'I', 'K66CNPMA', '01-01-2003', 'Hải Phòng', '01-01-2024 16:00:00'),
-  createData('6455435', '6455435', 'A', 'K66CNPMA', '01-01-2003', 'Hải Phòng', '01-01-2024 16:00:00'),
-  createData('4535534', '4535534', 'B', 'K66CNPMA', '01-01-2003', 'Hà Nội', '01-01-2024 16:00:00'),
-  createData('3453155', '3453155', 'C', 'K66CNPMA', '01-01-2003', 'Hải Dương', '01-01-2024 16:00:00'),
-  createData('3453495', '3453495', 'D', 'K66CNPMA', '01-01-2003', 'Nam Định', '01-01-2024 16:00:00'),
-  createData('8762344', '8762344', 'E', 'K66CNPMA', '01-01-2003', 'Cà Mau', '01-01-2024 16:00:00'),
-  createData('7868866', '7868866', 'F', 'K66CNPMA', '01-01-2003', 'Hải Phòng', '01-01-2024 16:00:00'),
-  createData('7978973', '7978973', 'G', 'K66CNPMA', '01-01-2003', 'Hải Phòng', '01-01-2024 16:00:00'),
-  createData('4353553', '4353553', 'H', 'K66CNPMA', '01-01-2003', 'Hải Phòng', '01-01-2024 16:00:00'),
-  createData('4353253', '4353253', 'I', 'K66CNPMA', '01-01-2003', 'Hải Phòng', '01-01-2024 16:00:00'),
-  createData('6455435', '6455435', 'A', 'K66CNPMA', '01-01-2003', 'Hải Phòng', '01-01-2024 16:00:00'),
-  createData('4535534', '4535534', 'B', 'K66CNPMA', '01-01-2003', 'Hà Nội', '01-01-2024 16:00:00'),
-  createData('3453155', '3453155', 'C', 'K66CNPMA', '01-01-2003', 'Hải Dương', '01-01-2024 16:00:00'),
-  createData('3453495', '3453495', 'D', 'K66CNPMA', '01-01-2003', 'Nam Định', '01-01-2024 16:00:00'),
-  createData('8762344', '8762344', 'E', 'K66CNPMA', '01-01-2003', 'Cà Mau', '01-01-2024 16:00:00'),
-  createData('7868866', '7868866', 'F', 'K66CNPMA', '01-01-2003', 'Hải Phòng', '01-01-2024 16:00:00'),
-  createData('7978973', '7978973', 'G', 'K66CNPMA', '01-01-2003', 'Hải Phòng', '01-01-2024 16:00:00'),
-  createData('4353553', '4353553', 'H', 'K66CNPMA', '01-01-2003', 'Hải Phòng', '01-01-2024 16:00:00'),
-  createData('4353253', '4353253', 'I', 'K66CNPMA', '01-01-2003', 'Hải Phòng', '01-01-2024 16:00:00'),
-  createData('6455435', '6455435', 'A', 'K66CNPMA', '01-01-2003', 'Hải Phòng', '01-01-2024 16:00:00'),
-  createData('4535534', '4535534', 'B', 'K66CNPMA', '01-01-2003', 'Hà Nội', '01-01-2024 16:00:00'),
-  createData('3453155', '3453155', 'C', 'K66CNPMA', '01-01-2003', 'Hải Dương', '01-01-2024 16:00:00'),
-  createData('3453495', '3453495', 'D', 'K66CNPMA', '01-01-2003', 'Nam Định', '01-01-2024 16:00:00'),
-  createData('8762344', '8762344', 'E', 'K66CNPMA', '01-01-2003', 'Cà Mau', '01-01-2024 16:00:00'),
-  createData('7868866', '7868866', 'F', 'K66CNPMA', '01-01-2003', 'Hải Phòng', '01-01-2024 16:00:00'),
-  createData('7978973', '7978973', 'G', 'K66CNPMA', '01-01-2003', 'Hải Phòng', '01-01-2024 16:00:00'),
-  createData('4353553', '4353553', 'H', 'K66CNPMA', '01-01-2003', 'Hải Phòng', '01-01-2024 16:00:00'),
-  createData('4353253', '4353253', 'I', 'K66CNPMA', '01-01-2003', 'Hải Phòng', '01-01-2024 16:00:00'),
-  // ... rest of your data
-];
 
 // Table Header Component
 const EnhancedTableHead = ({
@@ -255,7 +204,7 @@ EnhancedTableToolbar.propTypes = {
 };
 
 // Main Table Component
-const EnhancedTable = () => {
+const EnhancedTable = ({studentData}) => {
   const [order, setOrder] = React.useState(DEFAULT_ORDER);
   const [orderBy, setOrderBy] = React.useState(DEFAULT_ORDER_BY);
   const [selected, setSelected] = React.useState([]);
@@ -271,7 +220,7 @@ const EnhancedTable = () => {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = rows.map((n) => n.id);
+      const newSelected = studentData.map((n) => n.id);
       setSelected(newSelected);
       return;
     }
@@ -311,11 +260,11 @@ const EnhancedTable = () => {
   };
 
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - studentData.length) : 0;
 
   const visibleRows = React.useMemo(
     () =>
-      [...rows]
+      [...studentData]
         .sort(getComparator(order, orderBy))
         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
     [order, orderBy, page, rowsPerPage]
@@ -341,7 +290,7 @@ const EnhancedTable = () => {
               orderBy={orderBy}
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
-              rowCount={rows.length}
+              rowCount={studentData.length}
             />
             <TableBody>
               {visibleRows.map((row, index) => {
@@ -376,7 +325,7 @@ const EnhancedTable = () => {
                     >
                       {row.studentCode}
                     </TableCell>
-                    <TableCell align="left">{row.name}</TableCell>
+                    <TableCell align="left">{row.fullName}</TableCell>
                     <TableCell align="left">{row.className}</TableCell>
                     <TableCell align="left">{row.dateOfBirth}</TableCell>
                     <TableCell align="left">{row.address}</TableCell>
@@ -430,13 +379,13 @@ const EnhancedTable = () => {
         <TablePagination
           rowsPerPageOptions={[10, 25, 50, 100]}
           component="div"
-          count={rows.length}
+          count={studentData.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
           labelRowsPerPage="Số hàng mỗi trang:"
-          labelDisplayedRows={({ from, to, count }) => `${from} - ${to} trong tổng số ${count} sinh viên ,  Trang ${page + 1} trên ${Math.ceil(rows.length / rowsPerPage)}`}
+          labelDisplayedRows={({ from, to, count }) => `${from} - ${to} trong tổng số ${count} sinh viên ,  Trang ${page + 1} trên ${Math.ceil(studentData.length / rowsPerPage)}`}
         />
       </Paper>
     </Box>

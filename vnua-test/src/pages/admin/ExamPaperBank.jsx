@@ -10,10 +10,6 @@ const ExamPaperBank = () => {
 
     return (
         <Box style={{position: 'relative'}}>
-            <Box className="shadow-sm bg-white" style={{ position: 'sticky', top: 0, left: 0, right: 0, zIndex: 39 }}>
-                <MyAppBar label={'Quản lý đề thi'}/>
-            </Box>
-
             {/* Tiêu đề tab */}
             <Tabs
                 value={activeTab} 

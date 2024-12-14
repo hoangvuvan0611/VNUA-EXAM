@@ -82,13 +82,6 @@ const RoomExamManagement = () => {
 
   return (
     <Box>
-      <div
-          className="shadow-sm bg-white"
-          style={{ position: "sticky", top: 0, left: 0, right: 0, zIndex: 39 }}
-      >
-          <MyAppBar label={"Quản lý phòng thi"} />
-      </div>
-
       <Box sx={{mt: 1, mb: 3, display: 'flex', gap: 2, ml: 3, mr: 3}}>
           <Button 
               variant="contained" 

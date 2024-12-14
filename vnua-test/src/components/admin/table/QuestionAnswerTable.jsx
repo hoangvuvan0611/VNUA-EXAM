@@ -11,14 +11,7 @@ import {
   TableHead,
   TableRow,
   Typography,
-  TextField,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  Select,
-  Stack,
   TableSortLabel,
-  InputAdornment,
   TablePagination,
   FormControlLabel,
   Switch,
@@ -48,26 +41,26 @@ const PropertyEditIcon = (props) => (
     <path
       d="M21 11.5C21 7.02166 21 4.78249 19.6088 3.39124C18.2175 2 15.9783 2 11.5 2C7.02166 2 4.78249 2 3.39124 3.39124C2 4.78249 2 7.02166 2 11.5C2 15.9783 2 18.2175 3.39124 19.6088C4.72972 20.9472 6.85301 20.998 11 20.9999"
       stroke="currentColor"
-      strokeWidth="1.5"
+      strokeWidth="2"
       strokeLinecap="round"
     />
     <path
       d="M2 7H21"
       stroke="currentColor"
-      strokeWidth="1.5"
+      strokeWidth="2"
       strokeLinejoin="round"
     />
     <path
       d="M10 16H11.5M6 16H7M10 12H16M6 12H7"
       stroke="currentColor"
-      strokeWidth="1.5"
+      strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
     />
     <path
       d="M21.2633 14.8717C20.3622 13.8651 19.8215 13.925 19.2208 14.1048C18.8003 14.1647 17.3585 15.8422 16.7578 16.3765C15.7714 17.3478 14.7806 18.3479 14.7153 18.4784C14.5285 18.781 14.3548 19.3172 14.2707 19.9163C14.1145 20.815 13.8041 21.7815 14.1746 21.9133C14.3548 22.153 15.2559 21.8335 16.157 21.7017C16.7578 21.5938 17.1783 21.474 17.4787 21.2943C17.8992 21.0426 18.6801 20.1559 20.0258 18.8379C20.8697 17.9521 21.6838 17.34 21.9241 16.7409C22.1644 15.8422 21.804 15.3629 21.2633 14.8717Z"
       stroke="currentColor"
-      strokeWidth="1.5"
+      strokeWidth="2"
     />
   </svg>
 );
@@ -85,14 +78,14 @@ const DeletePutBackIcon = (props) => (
     <path
       d="M4.47461 6.10018L5.31543 18.1768C5.40886 19.3365 6.28178 21.5536 8.51889 21.8022C10.756 22.0507 15.2503 21.9951 16.0699 21.9951C16.8895 21.9951 19.0128 21.4136 19.0128 19.0059C19.0128 16.5756 16.9833 15.9419 15.7077 15.9635H12.0554M12.0554 15.9635C12.0607 15.7494 12.1515 15.5372 12.3278 15.3828L14.487 13.4924M12.0554 15.9635C12.0497 16.1919 12.1412 16.4224 12.33 16.5864L14.487 18.4609M19.4701 5.82422L19.0023 13.4792"
       stroke="currentColor"
-      strokeWidth="1.5"
+      strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
     />
     <path
       d="M3 5.49561H21M16.0555 5.49561L15.3729 4.08911C14.9194 3.15481 14.6926 2.68766 14.3015 2.39631C14.2148 2.33168 14.1229 2.2742 14.0268 2.22442C13.5937 2 13.0739 2 12.0343 2C10.9686 2 10.4358 2 9.99549 2.23383C9.89791 2.28565 9.80479 2.34547 9.7171 2.41265C9.32145 2.7158 9.10044 3.20004 8.65842 4.16854L8.05273 5.49561"
       stroke="currentColor"
-      strokeWidth="1.5"
+      strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
     />
@@ -112,14 +105,14 @@ const LockedIcon = (props) => (
     <path
       d="M2.5 8.18689C2.60406 6.08717 2.91537 4.77804 3.84664 3.84676C4.77792 2.91549 6.08705 2.60418 8.18677 2.50012M21.5 8.18689C21.3959 6.08717 21.0846 4.77804 20.1534 3.84676C19.2221 2.91549 17.9129 2.60418 15.8132 2.50012M15.8132 21.5001C17.9129 21.396 19.2221 21.0847 20.1534 20.1535C21.0846 19.2222 21.3959 17.913 21.5 15.8133M8.18676 21.5001C6.08705 21.396 4.77792 21.0847 3.84664 20.1535C2.91537 19.2222 2.60406 17.913 2.5 15.8133"
       stroke="currentColor"
-      strokeWidth="1.5"
+      strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
     />
     <path
       d="M9.5 10.5545C9.5 9.7128 9.36781 8.41337 9.87602 7.65569C10.9985 5.98217 13.38 6.20448 14.22 7.83797C14.6323 8.63969 14.4769 9.76055 14.496 10.5545M9.5 10.5545C8.20267 10.5545 7.93843 11.2972 7.74002 11.8797C7.55687 12.535 7.37042 14.0997 7.65602 15.8142C7.86969 16.9064 8.70479 17.3868 9.42297 17.4477C10.1098 17.5059 13.0097 17.4837 13.8492 17.4837C15.1501 17.4837 15.9624 17.1977 16.344 15.887C16.5272 14.8676 16.5773 13.0447 16.272 11.8797C15.8676 10.7146 15.0523 10.5545 14.496 10.5545M9.5 10.5545C10.8736 10.5 13.7107 10.5108 14.496 10.5545"
       stroke="currentColor"
-      strokeWidth="1.5"
+      strokeWidth="2"
       strokeLinecap="round"
     />
   </svg>
@@ -370,7 +363,7 @@ const QuestionTable = ({
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = questions.map((n) => n.question.id);
+      const newSelected = questions.map((n) => n.id);
       setSelected(newSelected);
       return;
     }
@@ -512,11 +505,11 @@ const QuestionTable = ({
                   <Checkbox
                     color="success"
                     indeterminate={
-                      selected.length > 0 && selected.length < questions.length
+                      selected.length > 0 && selected.length < questions?.length
                     }
                     checked={
-                      questions.length > 0 &&
-                      selected.length === questions.length
+                      questions?.length > 0 &&
+                      selected.length === questions?.length
                     }
                     onChange={handleSelectAllClick}
                     inputProps={{
@@ -589,14 +582,14 @@ const QuestionTable = ({
               </TableRow>
             </TableHead>
             <TableBody>
-              {questions.length === 0 ? (
+              {questions?.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={5} align="center">
                     Không tìm thấy câu hỏi phù hợp
                   </TableCell>
                 </TableRow>
               ) : (
-                questions.map((row, index) => (
+                questions?.map((row, index) => (
                   <Row
                     key={index}
                     row={row}

@@ -1,15 +1,16 @@
 import React, {useState, useEffect} from "react";
-import { useNavigate} from "react-router-dom";
-import { Box, Toolbar, Typography, IconButton } from "@mui/material";
+import { replace, useNavigate} from "react-router-dom";
+import { Box, Toolbar, Typography, IconButton, Tooltip } from "@mui/material";
 import '../../../assets/styles/admins/MyAppBar.css';
 
 import { Avatar } from "@mui/material";
 import { useThemeContext } from "../../../utils/AppThemeProvider";
 import { MaterialUISwitch } from "../../common/switch/MaterialUISwitch ";
+import Cookies from "js-cookie";
 
 import { useTheme } from '@mui/material/styles';
 
-const MyAppBar = ({label}) => {
+const MyAppBar = ({label, user}) => {
     const navigate = useNavigate();
     const { mode, toggleTheme } = useThemeContext();
     const theme = useTheme();
@@ -26,7 +27,17 @@ const MyAppBar = ({label}) => {
         day: 'numeric',   // Ngày
         month: 'long',    // Tháng (ví dụ: Tháng 11)
         year: 'numeric'   // Năm
-      }).format(date);
+    }).format(date);
+
+    // Xử lý khi logout
+    const handleLogout = () => {
+        // Xoa thong tin nguoi dung
+        Cookies.remove("token");
+        Cookies.remove("refreshToken");
+
+        // Chuyen huong den trang login va xoa lich su
+        navigate('/login', { replace: true });
+    }
 
     return (
         <div className="myAppBar" style={{backgroundColor: theme.palette.background.default}}>
@@ -54,14 +65,18 @@ const MyAppBar = ({label}) => {
                             <path d="M9 21C9.79613 21.6219 10.8475 22 12 22C13.1525 22 14.2039 21.6219 15 21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
                     </IconButton>
-                    <IconButton>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none">
-                            <path d="M15 17.625C14.9264 19.4769 13.3831 21.0494 11.3156 20.9988C10.8346 20.987 10.2401 20.8194 9.05112 20.484C6.18961 19.6768 3.70555 18.3203 3.10956 15.2815C3 14.723 3 14.0944 3 12.8373L3 11.1627C3 9.90561 3 9.27705 3.10956 8.71846C3.70555 5.67965 6.18961 4.32316 9.05112 3.51603C10.2401 3.18064 10.8346 3.01295 11.3156 3.00119C13.3831 2.95061 14.9264 4.52307 15 6.37501" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-                            <path d="M21 12H10M21 12C21 11.2998 19.0057 9.99153 18.5 9.5M21 12C21 12.7002 19.0057 14.0085 18.5 14.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                    </IconButton>
-                    <Avatar sx={{ bgcolor: 'red', marginLeft: 2 }}>H</Avatar>
-                    <Typography variant="body1" sx={{ marginLeft: 1 }}>Hoàng</Typography>
+                    <Tooltip title="Đăng xuất">
+                        <IconButton
+                            onClick={handleLogout}
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none">
+                                <path d="M15 17.625C14.9264 19.4769 13.3831 21.0494 11.3156 20.9988C10.8346 20.987 10.2401 20.8194 9.05112 20.484C6.18961 19.6768 3.70555 18.3203 3.10956 15.2815C3 14.723 3 14.0944 3 12.8373L3 11.1627C3 9.90561 3 9.27705 3.10956 8.71846C3.70555 5.67965 6.18961 4.32316 9.05112 3.51603C10.2401 3.18064 10.8346 3.01295 11.3156 3.00119C13.3831 2.95061 14.9264 4.52307 15 6.37501" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                                <path d="M21 12H10M21 12C21 11.2998 19.0057 9.99153 18.5 9.5M21 12C21 12.7002 19.0057 14.0085 18.5 14.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </IconButton>
+                    </Tooltip>
+                    <Avatar sx={{ bgcolor: 'red', marginLeft: 2, textTransform: 'uppercase' }}>{user?.charAt(0)}</Avatar>
+                    <Typography variant="body1" sx={{ marginLeft: 1 }}>{user}</Typography>
                 </Box>
             </Toolbar>
         </div>
