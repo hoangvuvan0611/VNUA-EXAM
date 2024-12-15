@@ -43,6 +43,7 @@ const DialogAddRoom = ({open, onClose, title}) => {
     const allowedFileTypes = ['.xls', '.xlsx', '.json', '.csv']; // Danh sách loại file được hỗ trợ
     const [ user, setUser ] = useState(null);
 
+    const [ examPaperSetList, setExamPaperSetList ] = useState([]);
     const [ errors, setErrors ] = useState({});
     const [ listUserData, setListUserData ] = useState([]); // Danh sách cán bộ coi thi
     const [ subjectList, setSubjectList ] = useState([]); // Danh sách môn học để chọn đề
@@ -97,10 +98,16 @@ const DialogAddRoom = ({open, onClose, title}) => {
 
     // Chọn danh sách cán bộ coi thi
     const addSupervisoryList = (supervisoryList) => {
-        console.log(supervisoryList)
         setNewRoom({
             ...newRoom,
             supervisoryList: supervisoryList,
+        });
+    }
+
+    const addExamPaperList = (examPaper) => {
+        setNewRoom({
+            ...newRoom,
+            examImage: examPaper,
         });
     }
 
@@ -117,8 +124,23 @@ const DialogAddRoom = ({open, onClose, title}) => {
     };
 
     // Xử lý chọn môn học
-    const handleSubjectSelectedChange = (event) => {
+    const handleSubjectSelectedChange = async (event) => {
         setSubjectSelected(event.target.value);
+
+        try {
+            const response = await api.get(`/examPaperSet/getBySubjectCodeAndUsername/subjectCode=${event.target.value}`);  
+            if (response.data.success === false) {
+                toast.warning("Hệ thống đang gặp sự cố, vui lòng thử lại sau!", {
+                    icon: "⚠️",
+                });
+            }
+            console.log(response)
+            setExamPaperSetList(response.data.dataList);
+        } catch (error) {
+            toast.warning("Hệ thống đang gặp sự cố, vui lòng thử lại sau!", {
+                icon: "⚠️",
+            });
+        }
     };
 
     // Mở form thêm mới sinh viên
@@ -409,57 +431,59 @@ const DialogAddRoom = ({open, onClose, title}) => {
                                     size="small"
                                     onChange={handleSubjectSelectedChange}
                                 >
-                                    {subjectList.map((subject) => (
-                                        <MenuItem value={subject.id}>{subject.subjectName}</MenuItem>
+                                    {subjectList?.map((subject) => (
+                                        <MenuItem value={subject.subjectCode}>{subject.subjectName}</MenuItem>
                                     ))}
                                 </Select>
                             </FormControl>
                         </Box>
-                        {/* Chọn danh sách đề hoặc bộ đề sau khi chọn môn học */}
+                        {/* Chọn danh sách bộ đề sau khi chọn môn học */}
                         <Box sx={{mb: 3}}>
                             <Autocomplete
                                 multiple
                                 disabled={subjectSelected.length < 1}
                                 id="checkboxes-tags-dem-examSet"
-                                options={listUserData}
-                                onChange={(event, username) => {
-                                    addSupervisoryList(username);
+                                options={examPaperSetList}
+                                onChange={(event, selectedItems) => {
+                                    console.log(selectedItems)
+                                    addExamPaperList(selectedItems);
                                 }}
                                 sx={{mb: 1}}
                                 disableCloseOnSelect
-                                // getOptionLabel={(option) => option.title}
+                                getOptionLabel={(option) => option.title} // Đảm bảo hiển thị title
+                                isOptionEqualToValue={(option, value) => option.id === value.id} // Để so sánh các option
                                 renderOption={(props, option, { selected }) => {
-                                    const { key, ...optionProps } = props;
                                     return (
-                                    <li key={key} {...optionProps}>
-                                        <Checkbox
-                                            icon={icon}
-                                            checkedIcon={checkedIcon}
-                                            style={{ marginRight: 2, color: 'green' }}
-                                            checked={selected}
-                                        />
-                                        {option}
-                                    </li>
+                                        <li {...props} key={option.id}>
+                                            <Checkbox
+                                                icon={icon}
+                                                checkedIcon={checkedIcon}
+                                                style={{ marginRight: 2, color: 'green' }}
+                                                checked={selected}
+                                            />
+                                            {option.title} {/* Hiển thị title của option */}
+                                        </li>
                                     );
                                 }}
                                 renderInput={(params) => (
-                                    <TextField {...params} 
+                                    <TextField 
+                                        {...params}
                                         variant="filled"
                                         size="small"
-                                        label="Chọn danh sách đề hoặc bộ đề" 
-                                        placeholder="Nhập tên cán bộ coi thi" 
+                                        label="Chọn bộ đề"
+                                        placeholder="Nhập tên cán bộ coi thi"
                                         sx={{
                                             '& .MuiInputBase-input::placeholder': {
-                                                fontSize: '0.8rem', // Thay đổi kích thước placeholder
-                                                color: 'gray',      // Thay đổi màu placeholder (tùy chọn)
+                                                fontSize: '0.8rem',
+                                                color: 'gray',
                                             },
                                         }}
                                         InputLabelProps={{
                                             sx: {
-                                            fontSize: '0.9rem',  // Kích thước nhỏ
-                                            color: 'gray',       // Màu sắc thông thường
+                                                fontSize: '0.9rem',
+                                                color: 'gray',
                                                 '&.Mui-focused': {
-                                                    fontSize: '1rem',  // Kích thước khi label được focus
+                                                    fontSize: '1rem',
                                                 },
                                             },
                                         }}
