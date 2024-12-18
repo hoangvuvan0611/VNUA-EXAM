@@ -39,7 +39,6 @@ const DialogAddRoom = ({open, onClose, title}) => {
     const [ uploading, setUploading ] = useState(false);
     const [ uploadError, setUploadError ] = useState(null);
     const [ uploadProgress, setUploadProgress ] = useState(0);
-    const [ questions, setQuestions ] = useState([]);
     const allowedFileTypes = ['.xls', '.xlsx', '.json', '.csv']; // Danh sách loại file được hỗ trợ
     const [ user, setUser ] = useState(null);
 
@@ -54,18 +53,20 @@ const DialogAddRoom = ({open, onClose, title}) => {
     const [ newStudent, setNewStudent ] = useState({ // Đối tượng sinhg viên thêm mới
         id: "",
         studentCode: "",
-        name: "",
+        fullName: "",
         className: "",
         dateOfBirth: "",
         address: "",
     });
     const [ newRoom, setNewRoom ] = useState({
-        roomName: "",
-        roomAddress: "",
+        roomExamName: "",
+        address: "",
         timeDuration: "",
+        subjectCode: "",
+        state: "",
         supervisoryList: [],
         studentList: [],
-        examPaperList: [],
+        examPaperSetId: "",
     });
 
     // CSS hiệu ứng tải file
@@ -85,6 +86,14 @@ const DialogAddRoom = ({open, onClose, title}) => {
     const handleCloseDialog = () => { 
         onClose();
         setIsEditing(false);
+        setNewStudent({
+            id: "",
+            studentCode: "",
+            fullName: "",
+            className: "",
+            dateOfBirth: "",
+            // address: "",
+        });
     };
 
     // Xử lý khi nhập input room 
@@ -104,17 +113,24 @@ const DialogAddRoom = ({open, onClose, title}) => {
         });
     }
 
-    const addExamPaperList = (examPaper) => {
-        setNewRoom({
-            ...newRoom,
-            examImage: examPaper,
-        });
-    }
+    //Validate form phòng thi
+    const validateRoomExamForm = () => {
+        let tempErrors = {};
+        tempErrors.roomExamName = newRoom.roomExamName ? "" : "Tên phòng thi là bắt buộc!";
+        tempErrors.address = newRoom.address ? "" : "Địa điểm là bắt buộc!";
+        tempErrors.timeDuration = newRoom.timeDuration ? "" : "Thời gian thi là bắt buộc!";
+        tempErrors.subjectCode = newRoom.subjectCode ? "" : "Môn học là bắt buộc!";
+        tempErrors.examPaperSetId = newRoom.examPaperSetId ? "" : "Vui lòng chọn bộ đề để tiếp tục!";
+    
+        setErrors(tempErrors);
+        return Object.values(tempErrors).every((x) => x === "");
+    };
 
+    // Validate form sinh viên
     const validateForm = () => {
         let tempErrors = {};
         tempErrors.studentCode = newStudent.studentCode ? "" : "Mã thí sinh là bắt buộc";
-        tempErrors.name = newStudent.name ? "" : "Họ tên thí sinh là bắt buộc";
+        tempErrors.fullName = newStudent.fullName ? "" : "Họ tên thí sinh là bắt buộc";
         tempErrors.dateOfBirth = newStudent.dateOfBirth
           ? ""
           : "Ngày sinh là bắt buộc";
@@ -126,7 +142,11 @@ const DialogAddRoom = ({open, onClose, title}) => {
     // Xử lý chọn môn học
     const handleSubjectSelectedChange = async (event) => {
         setSubjectSelected(event.target.value);
-
+        setNewRoom({
+            ...newRoom,
+            subjectCode: event.target.value,
+        });
+        setExamPaperSetList([]);
         try {
             const response = await api.get(`/examPaperSet/getBySubjectCodeAndUsername/subjectCode=${event.target.value}`);  
             if (response.data.success === false) {
@@ -134,7 +154,6 @@ const DialogAddRoom = ({open, onClose, title}) => {
                     icon: "⚠️",
                 });
             }
-            console.log(response)
             setExamPaperSetList(response.data.dataList);
         } catch (error) {
             toast.warning("Hệ thống đang gặp sự cố, vui lòng thử lại sau!", {
@@ -142,6 +161,21 @@ const DialogAddRoom = ({open, onClose, title}) => {
             });
         }
     };
+
+    // Xu ly chon bo de thi
+    const handleExamPaperSetSelectedChange = (event) => {
+        setNewRoom({
+            ...newRoom,
+            examPaperSetId: event.target.value
+        });
+    }
+
+    const handleGenderStudent = (event) => {
+        setNewStudent({
+            ...newStudent,
+            gender: event.target.value
+        });
+    }
 
     // Mở form thêm mới sinh viên
     const handleOpenTypeAddStudent = (type) => setTpeAddStudent(type);
@@ -161,9 +195,8 @@ const DialogAddRoom = ({open, onClose, title}) => {
             [name]: value,
         }));
     };
-    const handleClickButtonAddStudent = (i) => {
+    const handleClickButtonAddStudent = () => {
         if (!validateForm()) return;
-
 
         if (isEditing) {    
             setNewRoom({
@@ -181,10 +214,10 @@ const DialogAddRoom = ({open, onClose, title}) => {
                 studentList: [...newRoom.studentList, {
                     id: uuidv4(),
                     studentCode: newStudent.studentCode,
-                    name: newStudent.name,
+                    fullName: newStudent.fullName,
                     className: newStudent.className,
                     dateOfBirth: newStudent.dateOfBirth,
-                    address: newStudent.address,
+                    gender: newStudent.genden,
                 }],
             });
         }
@@ -192,10 +225,10 @@ const DialogAddRoom = ({open, onClose, title}) => {
         setNewStudent({
             id: "",
             studentCode: "",
-            name: "",
+            fullName: "",
             className: "",
             dateOfBirth: "",
-            address: "",
+            gender: "",
         });
     };
     const handleDeleteStudent = (id) => { // Xử lý xóa student
@@ -225,8 +258,22 @@ const DialogAddRoom = ({open, onClose, title}) => {
         };
 
         try {
-            const response = await api.post('/file/readFileQuestion', formData, uploadConfig);
-            setQuestions(response.data.dataList);
+            const response = await api.post('/file/getStudentFromFile', formData, uploadConfig);
+            if (response.data.success === false) {
+                toast.warning(`Lỗi khi lấy danh sách sinh viên từ file: ${response.data.message}`, {
+                    icon: "⚠️",
+                });
+            }
+
+            setNewRoom({
+                ...newRoom,
+                studentList: [
+                    ...newRoom.studentList,
+                    ...response.data.dataList
+                ],
+            });
+
+            setFile(null);
         } catch (error) {
             setUploadError("Có lỗi xảy ra khi tải lên. Vui lòng thử lại!");
         } finally {
@@ -250,6 +297,40 @@ const DialogAddRoom = ({open, onClose, title}) => {
         }
     }
 
+    // Xử lý button mở phòng thi
+    const handleOpenRoom = async () => {
+
+        if (!validateRoomExamForm()) return;
+
+        // if (newRoom.examPaperId?.length <= 0) {
+        //     toast.warning("Chưa chọn bộ đề, vui lòng chọn bộ đề để tiếp tục!", {
+        //         icon: "⚠️",
+        //     });
+        //     return;
+        // }
+
+        setNewRoom({
+            ...newRoom,
+            state: "ACTIVE",
+        })
+        try {
+            const response = await api.post(`/roomExam/create`, newRoom);  
+            console.log(response);
+
+            if (response.data.success === false) {
+                toast.warning(`Lỗi!, ${response.data.message}`, {
+                    icon: "⚠️",
+                });
+                return;
+            }
+        } catch (error) {
+            toast.warning("Hệ thống đang gặp sự cố, vui lòng thử lại sau!", {
+                icon: "⚠️",
+            });
+        }
+    }
+
+    // Lấy danh sách môn học
     const getSubjectData = async () => {
         try {
             const response = await api.get(
@@ -297,11 +378,11 @@ const DialogAddRoom = ({open, onClose, title}) => {
                                 required
                                 fullWidth
                                 label="Tên phòng thi"
-                                name="roomName"
-                                value={newRoom.roomName}
+                                name="roomExamName"
+                                value={newRoom.roomExamName}
                                 onChange={handleInputChange}
-                                error={!!errors.roomName}
-                                helperText={errors.roomName}
+                                error={!!errors.roomExamName}
+                                helperText={errors.roomExamName}
                                 variant="filled"
                                 margin="none"
                                 size="small"
@@ -321,11 +402,11 @@ const DialogAddRoom = ({open, onClose, title}) => {
                                 required
                                 fullWidth
                                 label="Địa điểm"
-                                name="roomAddress"
-                                value={newRoom.roomAddress}
+                                name="address"
+                                value={newRoom.address}
                                 onChange={handleInputChange}
-                                error={!!errors.roomAddress}
-                                helperText={errors.roomAddress}
+                                error={!!errors.address}
+                                helperText={errors.address}
                                 variant="filled"
                                 margin="none"
                                 size="small"
@@ -422,6 +503,8 @@ const DialogAddRoom = ({open, onClose, title}) => {
                                 <Select
                                     required
                                     fullWidth
+                                    error={!!errors.subjectCode}
+                                    helperText={errors.subjectCode}
                                     labelId="subject-select-label"
                                     id="subject-simple-select"
                                     placeholder="Chọn môn học"
@@ -438,58 +521,28 @@ const DialogAddRoom = ({open, onClose, title}) => {
                             </FormControl>
                         </Box>
                         {/* Chọn danh sách bộ đề sau khi chọn môn học */}
-                        <Box sx={{mb: 3}}>
-                            <Autocomplete
-                                multiple
-                                disabled={subjectSelected.length < 1}
-                                id="checkboxes-tags-dem-examSet"
-                                options={examPaperSetList}
-                                onChange={(event, selectedItems) => {
-                                    console.log(selectedItems)
-                                    addExamPaperList(selectedItems);
-                                }}
-                                sx={{mb: 1}}
-                                disableCloseOnSelect
-                                getOptionLabel={(option) => option.title} // Đảm bảo hiển thị title
-                                isOptionEqualToValue={(option, value) => option.id === value.id} // Để so sánh các option
-                                renderOption={(props, option, { selected }) => {
-                                    return (
-                                        <li {...props} key={option.id}>
-                                            <Checkbox
-                                                icon={icon}
-                                                checkedIcon={checkedIcon}
-                                                style={{ marginRight: 2, color: 'green' }}
-                                                checked={selected}
-                                            />
-                                            {option.title} {/* Hiển thị title của option */}
-                                        </li>
-                                    );
-                                }}
-                                renderInput={(params) => (
-                                    <TextField 
-                                        {...params}
-                                        variant="filled"
-                                        size="small"
-                                        label="Chọn bộ đề"
-                                        placeholder="Nhập tên cán bộ coi thi"
-                                        sx={{
-                                            '& .MuiInputBase-input::placeholder': {
-                                                fontSize: '0.8rem',
-                                                color: 'gray',
-                                            },
-                                        }}
-                                        InputLabelProps={{
-                                            sx: {
-                                                fontSize: '0.9rem',
-                                                color: 'gray',
-                                                '&.Mui-focused': {
-                                                    fontSize: '1rem',
-                                                },
-                                            },
-                                        }}
-                                    />
-                                )}
-                            />
+                        <Box sx={{mb: 1.5}}>
+                            <FormControl variant="filled" sx={{}} fullWidth>
+                                <InputLabel sx={{fontSize: '0.9rem'}} required id="examPaperSet-select-label">Bộ đề</InputLabel>
+                                <Select
+                                    required
+                                    fullWidth
+                                    error={!!errors.examPaperSetId}
+                                    helperText={errors.examPaperSetId}
+                                    labelId="subject-select-label"
+                                    id="subject-simple-select"
+                                    placeholder="Chọn bộ đề"
+                                    value={newRoom.examPaperSetId}
+                                    label="Age"
+                                    variant="filled"
+                                    size="small"
+                                    onChange={handleExamPaperSetSelectedChange}
+                                >
+                                    {examPaperSetList?.map((examPaperSet) => (
+                                        <MenuItem value={examPaperSet.id}>{examPaperSet.title}</MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
                         </Box>
                         <Box>
                             <Button
@@ -556,11 +609,11 @@ const DialogAddRoom = ({open, onClose, title}) => {
                                         required
                                         fullWidth
                                         label="Họ và tên"
-                                        name="name"
-                                        value={newStudent.name}
+                                        name="fullName"
+                                        value={newStudent.fullName}
                                         onChange={handleInputStudentChange}
-                                        error={!!errors.name}
-                                        helperText={errors.name}
+                                        error={!!errors.fullName}
+                                        helperText={errors.fullName}
                                         variant="filled"
                                         margin="none"
                                         size="small"
@@ -625,27 +678,24 @@ const DialogAddRoom = ({open, onClose, title}) => {
                                     />
                                 </Box>
                                 <Box sx={{mb: 1.5}}>
-                                    <TextField
-                                        fullWidth
-                                        label="Quê quán"
-                                        name="address"
-                                        value={newStudent.address}
-                                        onChange={handleInputStudentChange}
-                                        error={!!errors.address}
-                                        helperText={errors.address}
-                                        variant="filled"
-                                        margin="none"
-                                        size="small"
-                                        InputLabelProps={{
-                                            sx: {
-                                            fontSize: '0.9rem',  // Kích thước nhỏ
-                                            color: 'gray',       // Màu sắc thông thường
-                                                '&.Mui-focused': {
-                                                    fontSize: '1rem',  // Kích thước khi label được focus
-                                                },
-                                            },
-                                        }}
-                                    />
+                                    <FormControl variant="filled" sx={{}} fullWidth>
+                                        <InputLabel sx={{fontSize: '0.9rem'}} required id="subject-select-label">Giới tính</InputLabel>
+                                        <Select
+                                            required
+                                            fullWidth
+                                            labelId="subject-select-label"
+                                            id="subject-simple-select"
+                                            placeholder="Chọn giới tính"
+                                            value={newStudent.gender}
+                                            label="Age"
+                                            variant="filled"
+                                            size="small"
+                                            onChange={handleGenderStudent}
+                                        >
+                                            <MenuItem value={"nam"}>Nam</MenuItem>
+                                            <MenuItem value={"nữ"}>Nữ</MenuItem>
+                                        </Select>
+                                    </FormControl>
                                 </Box>
                                 <Button
                                     fullWidth
@@ -653,10 +703,10 @@ const DialogAddRoom = ({open, onClose, title}) => {
                                     variant="outlined"
                                     sx={{ mr: 2, mb: 2, textTransform: 'capitalize' }}
                                     size="medium"
-                                    type="submit"
+                                    type="button"
                                     onClick={(e) => {
                                         setIsEditing(false);
-                                        handleClickButtonAddStudent(e)
+                                        handleClickButtonAddStudent();
                                     }}
                                 >
                                     {isEditing ? "Lưu thay đổi" : "Lưu sinh viên"} 
@@ -726,9 +776,9 @@ const DialogAddRoom = ({open, onClose, title}) => {
                                             )}
                                         </Box>
                                         <ListItemText
-                                            primary={file.name}
-                                            secondary={`${(file.size / 1024 / 1024).toFixed(2)} MB`}
-                                            sx={{ color: 'Highlight' }}
+                                            primary={file?.name}
+                                            secondary={`${(file?.size / 1024 / 1024).toFixed(2)} MB`}
+                                            sx={{ color: 'Highlight', fontSize: '12px' }}
                                         />
                                         <Tooltip title="Xóa file">
                                             <IconButton onClick={deleteFileSelected}>
@@ -757,6 +807,18 @@ const DialogAddRoom = ({open, onClose, title}) => {
                                         <Typography variant="body2">{uploadError}</Typography>
                                     </Box>
                                 )}
+
+                                <Box mt={2}>
+                                    <Button
+                                        onClick={uploadFile}
+                                        disabled={file === null || uploading}
+                                        variant="contained"
+                                        startIcon={<CloudUploadIcon />}
+                                        sx={{ textTransform: 'none' }}
+                                    >
+                                        {uploading ? 'Đang tải...' : "Lấy danh sách sinh viên từ file"}
+                                    </Button>
+                                </Box>
                             </Box>
                         }
                     </Grid2>
@@ -764,7 +826,7 @@ const DialogAddRoom = ({open, onClose, title}) => {
                     {/* Danh sách thí sinh: nhập tay hoặc import từ file */}
                     <Grid2 item component='form' size={{ xs: 12, md: 7}}>
                         <Typography variant="inherit" gutterBottom fontWeight={"bold"}>
-                                Danh sách sinh viên vừa thêm
+                                Danh sách sinh viên vừa thêm: {newRoom.studentList?.length > 0 ? newRoom.studentList?.length : 0}
                         </Typography>
                         <TableContainer component={Paper} variant="outlined" sx={{maxHeight: '70%', overflowY: "auto"}}>
                             <Table size="small" aria-label="sticky table" stickyHeader>
@@ -775,7 +837,7 @@ const DialogAddRoom = ({open, onClose, title}) => {
                                     <TableCell>Họ và tên</TableCell>
                                     <TableCell>Lớp</TableCell>
                                     <TableCell>Ngày sinh</TableCell>
-                                    <TableCell>Quê quán</TableCell>
+                                    <TableCell>Giới tính</TableCell>
                                     <TableCell align="center">Thao tác</TableCell>
                                     </TableRow>
                                 </TableHead>
@@ -799,10 +861,10 @@ const DialogAddRoom = ({open, onClose, title}) => {
                                                 >
                                                 <TableCell>{index + 1}</TableCell>
                                                 <TableCell>{student.studentCode}</TableCell>
-                                                <TableCell>{student.name}</TableCell>
+                                                <TableCell>{student.fullName}</TableCell>
                                                 <TableCell>{student.className}</TableCell>
-                                                <TableCell>{student.dateOfBirth}</TableCell>
-                                                <TableCell>{student.address}</TableCell>
+                                                <TableCell>{new Date(student.dateOfBirth).toLocaleDateString()}</TableCell>
+                                                <TableCell>{student.gender}</TableCell>
                                                 <TableCell align="center">
                                                     <Tooltip title="Xóa">
                                                         <IconButton
@@ -817,6 +879,7 @@ const DialogAddRoom = ({open, onClose, title}) => {
                                                         <IconButton 
                                                             size="small" 
                                                             onClick={(e) => {
+                                                                setTpeAddStudent(1);
                                                                 setErrors({});
                                                                 setIsEditing(true);
                                                                 setNewStudent(student);
@@ -854,24 +917,25 @@ const DialogAddRoom = ({open, onClose, title}) => {
                 <Button
                     color="success"
                     variant="contained"
-                    sx={{ mr: 2, mb: 2, textTransform: 'capitalize' }}
+                    sx={{ mr: 2, textTransform: 'capitalize' }}
                     size="medium"
+                    onClick={handleOpenRoom}
                 >
                     Bắt đầu mở phòng thi ngay
                 </Button>
                 <Button
                     color="warning"
                     variant="contained"
-                    sx={{ mr: 2, mb: 2, textTransform: 'capitalize' }}
+                    sx={{ mr: 2, textTransform: 'capitalize' }}
                     size="medium"
                 >
-                    Lưu  và bắt đầu thi sau
+                    Lưu và bắt đầu thi sau
                 </Button>
                 <Button
                     onClick={handleCloseDialog}
                     color="primary"
                     variant="contained"
-                    sx={{ mr: 2, mb: 2, textTransform: 'capitalize'}}
+                    sx={{ mr: 2, textTransform: 'capitalize'}}
                     size="medium"
                 >
                     Hủy
