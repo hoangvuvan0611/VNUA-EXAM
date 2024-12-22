@@ -1,6 +1,5 @@
 package com.vvh.vnua_test.service;
 
-import com.vvh.vnua_test.core.mapstruct.UserMapper;
 import com.vvh.vnua_test.dto.model.UserDTO;
 import com.vvh.vnua_test.dto.model.UserGetAllDTO;
 import com.vvh.vnua_test.dto.request.CreateUserRequest;
