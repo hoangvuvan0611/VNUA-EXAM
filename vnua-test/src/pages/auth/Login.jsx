@@ -24,6 +24,7 @@ const Login = ({ setLoggedIn }) => {
   const [ email, setEmail ] = useState("");
   const [ password, setPassword ] = useState("");
   const [ isStudent, setIsStudent ] = useState(true);
+  const [ studentCode, setStudentCode ] = useState("");
 
   const validateUserInf = () => {
     if (usernameOrEmail.trim().length < 1) {
@@ -83,6 +84,7 @@ const Login = ({ setLoggedIn }) => {
     }
   };
 
+  // Giảng viên đăng nhập
   const login = async () => {
     if (usernameOrEmail.trim().length < 1) {
       toast.warning("Mã thí sinh không được để trống!", {
@@ -113,18 +115,44 @@ const Login = ({ setLoggedIn }) => {
         });
       }
 
+      // setLoggedIn(true);
+      navigate('/admin/'); // Chuyển hướng về trang chủ sau khi đăng nhập
+
       // Lưu token vào cookies sau khi đăng nhập thành công
       Cookies.set('token', response.data.data.accessToken, { secure: true, sameSite: 'strict' });
       Cookies.set('refreshToken', response.data.data.refreshToken, { secure: true, sameSite: 'strict' });
 
       localStorage.setItem('user', JSON.stringify(response.data.data.username));
-
-      // setLoggedIn(true);
-      navigate('/admin/'); // Chuyển hướng về trang chủ sau khi đăng nhập
     } catch (error) {
       console.error("Error logging in", error);
     }
   };
+
+  // Sinh viên vào thi
+  const loginExam = async () => {
+    if (studentCode.trim().length < 1) {
+      toast.warning("Mã thí sinh không được để trống!", {
+        icon: "⚠️",
+      });
+      return;
+    };
+
+    try {
+      const response = await api.post(
+        "/auth/login", {
+          usernameOrEmail,
+          password,
+        }, { withCredentials: true },
+      );
+      if (response.data.success === false) {
+        toast.warning("Thông tin đăng nhập không chính xác", {
+          icon: "⚠️",
+        });
+      }
+    } catch (error) {
+
+    }
+  }
 
   return (
     <Box className="auth">
@@ -180,12 +208,12 @@ const Login = ({ setLoggedIn }) => {
             <input
               type="text"
               autoComplete="section-blue shipping name"
-              value={usernameOrEmail}
-              onInput={(e) => setUsernameOrEmail(e.target.value)}
-              id="loginUsername"
+              value={studentCode}
+              onInput={(e) => setStudentCode(e.target.value)}
+              id="loginStudentCode"
               placeholder="Nhập mã thí sinh"
             />
-            <Button onClick={login} sx={{ mt: 2 }}>
+            <Button onClick={loginExam} sx={{ mt: 2 }}>
               Đăng nhập
             </Button>
           </form>

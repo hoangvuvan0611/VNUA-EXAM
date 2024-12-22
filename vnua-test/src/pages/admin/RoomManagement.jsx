@@ -1,142 +1,255 @@
-import React from "react";
-import { Box, Typography, Card, CardContent, Chip, IconButton, Stack, Grid2, Tooltip } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import VisibilityIcon from "@mui/icons-material/Visibility";
+import React, { useEffect, useState } from "react";
+import { 
+  Box, 
+  Typography, 
+  Card, 
+  CardContent, 
+  Chip, 
+  IconButton, 
+  Stack, 
+  Grid2, 
+  Tooltip 
+} from "@mui/material";
 import { FcEditImage, FcFrame, FcFullTrash, FcHeatMap } from "react-icons/fc";
+import api from "../../services/api/axios.config";
+import { toast, ToastContainer } from "react-toastify";
 
-// Danh sách phòng thi mẫu
-const rooms = [
-  { id: 1, name: "Phòng 101", status: "Đang diễn ra", type: "active", color: "#2E8B57" },
-  { id: 2, name: "Phòng 102", status: "Sắp diễn ra", type: "upcoming", color: "orange" },
-  { id: 3, name: "Phòng 103", status: "Tạm hoãn", type: "paused", color: "red" },
-  { id: 4, name: "Phòng 104ẻger", status: "Đang diễn ra", type: "active", color: "#2E8B57" },
-  { id: 7, name: "Phòng 104ẻtdfgdgdfgdfghaonglsdfjkdhsfkj", status: "Đang diễn ra", type: "active", color: "#2E8B57" },
-  { id: 8, name: "Phòng 104dfgdg", status: "Đang diễn ra", type: "active", color: "#2E8B57" },
-  { id: 9, name: "Phòng 104dfgdfgdfg", status: "Đang diễn ra", type: "active", color: "#2E8B57" },
-  { id: 10, name: "Phòng 104", status: "Đang diễn ra", type: "active", color: "#2E8B57" },
-  { id: 11, name: "Phòng 104dfgdfgdfg", status: "Đang diễn ra", type: "active", color: "#2E8B57" },
-  { id: 5, name: "Phòng 105", status: "Sắp diễn ra", type: "upcoming", color: "orange" },
-  { id: 6, name: "Phòng 106dfgdgdfg", status: "Gặp sự cố", type: "paused", color: "red" },
-];
-
-// Hàm phân loại phòng theo loại
-const groupRoomsByType = (rooms) => {
-  const grouped = {
-    active: [],
-    upcoming: [],
-    paused: [],
-  };
-  rooms.forEach((room) => {
-    grouped[room.type].push(room);
-  });
-  return grouped;
+const statusColor = {
+  ACTIVE: "#2E8B57",
+  WAITING: "#e7ce50",
 };
 
+const stateSpecial = {
+  ACTIVE: "Đang diễn ra",
+  WAITING: "Đang chờ"
+}
+
 const RoomManagement = () => {
-  const groupedRooms = groupRoomsByType(rooms);
+
+  const [ roomExam, setRoomExam ] = useState([]);
+  const [ groupedRooms, setGroupedRooms ] = useState([]);
+
+  // Hàm lấy màu theo trạng thái
+  const getColorByState = (state) => {
+    return statusColor[state] || "gray";
+  }
+
+  // Lấy trạng thái tiếng việt
+  const getSpecialState = (state) => {
+    return stateSpecial[state] || "";
+  } 
+
+  // Hàm phân loại phòng theo loại
+  const groupRoomsByType = (rooms) => {
+    const grouped = {
+      ACTIVE: [],
+      WAITING: [],
+      UNKNOWN: [],
+    };
+    rooms?.forEach((room) => {
+      const state = room?.state || 'UNKNOWN';
+      if (!grouped[state]) {
+        grouped[state] = []; // Khởi tạo nếu chưa tồn tại
+      }
+      grouped[state].push(room);
+    });
+    return grouped;
+  };
 
   const renderRoomSection = (title, rooms) => (
     <Box sx={{ mb: 4 }}>
         <Typography variant="subtitle1" gutterBottom>
-        {title}
+        {title}: {rooms?.length} 
         </Typography>
-        <Grid2 container spacing={3} xs={12}>
-            {rooms.map((room) => (
-            <Grid2 item xs={12} width={200} sm={6} md={4} key={room.id}>
-                <Card
-                    sx={{
-                    boxShadow: 8,
-                    borderRadius: "20px",
-                    position: "relative",
-                    overflow: "hidden",
-                    transform: "scale(1.05)",
-                    transition: "transform 0.3s ease-in-out",
-                    height: "100%", // Đảm bảo chiều cao đầy đủ
-                    width: "100%", // Đảm bảo chiều rộng đầy đủ
-                    display: "flex", // Sử dụng flexbox
-                    flexDirection: "column", // Sắp xếp theo chiều dọc
-                    ":hover": {
-                        transform: "scale(1.1)",
-                    },
-                    "::before": {
-                        content: '""',
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        width: "100%",
-                        height: "100%",
-                        background: `linear-gradient(to bottom, ${room.color} 80%, transparent 80%)`,
-                        zIndex: 1,
-                        pointerEvents: "none",
-                        borderRadius: "20px",
-                    }
-                    }}
+        <Grid2 container spacing={3}>
+          {rooms?.map((room) => (
+            <Grid2 item xs={12} sm={6} md={4} lg={3} key={room.id}>
+              <Card
+                sx={{
+                  height: '100%',
+                  minHeight: '200px', // Set minimum height
+                  borderRadius: 4,
+                  position: 'relative',
+                  overflow: 'hidden',
+                  transition: 'transform 0.3s ease-in-out',
+                  '&:hover': {
+                    transform: 'scale(1.03)',
+                  },
+                  boxShadow: 3,
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
+              >
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: '20%',
+                    bgcolor: getColorByState(room.state),
+                    background: (theme) => `linear-gradient(to bottom, ${getColorByState(room.state)} 0%,  100%)`,
+                  }}
+                />
+                
+                <CardContent 
+                  sx={{ 
+                    position: 'relative', 
+                    zIndex: 1, 
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    p: 3, // Consistent padding
+                  }}
                 >
-                    <CardContent 
-                    sx={{ 
-                        position: "relative", 
-                        zIndex: 2, 
-                        flexGrow: 1, // Cho phép nội dung card tự động mở rộng
-                        display: "flex", 
-                        flexDirection: "column",
-                        width: "100%", // Đảm bảo nội dung chiếm toàn bộ chiều rộng
-                        p: 2 // Thêm padding nếu cần
-                    }}
+                  {/* Content Section */}
+                  <Box sx={{ mb: 'auto' }}>
+                    <Typography 
+                      variant="subtitle1" 
+                      sx={{ 
+                        color: 'white',
+                        fontWeight: 'bold',
+                        mb: 1,
+                        overflow: 'visible',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap'
+                      }}
                     >
-                    <Typography variant="subtitle1" sx={{ fontWeight: "bold", color: "#fff", width: "100%", overflow: 'visible' }}>
-                        {room.name}
+                      {room.roomExamName??"(Phòng thi...)"}
                     </Typography>
-                    <Typography sx={{ width: "100%" }}>Số thí sinh: </Typography>
-                    <Typography sx={{ width: "100%" }}>Giám thị: </Typography>
-                    <Chip
-                        label={room.status}
-                        sx={{
-                        mt: 1,
-                        color: "#fff",
-                        backgroundColor: room.color,
-                        width: "100%", // Nếu muốn chip chiếm toàn bộ chiều rộng
-                        alignSelf: "center", // Căn giữa chip
-                        }}
-                    />
-                    <Stack 
-                        direction="row" 
-                        spacing={1} 
-                        sx={{ 
-                        mt: "auto", // Đẩy các nút xuống dưới cùng
-                        justifyContent: 'center',
-                        width: "100%" // Đảm bảo stack chiếm toàn bộ chiều rộng
-                        }}
-                    >
-                        <Tooltip title="Xem chi tiết">
-                        <IconButton color="primary" title="Xem chi tiết">
-                            <FcFrame/>
-                        </IconButton>
-                        </Tooltip>
-                        <Tooltip title="Chỉnh sửa">
-                        <IconButton color="secondary" title="Chỉnh sửa">
-                            <FcEditImage />
-                        </IconButton>
-                        </Tooltip>
-                        <Tooltip title="Vô hiệu hoá phòng thi">
-                        <IconButton color="error" title="Vô hiệu hoá">
-                            <FcFullTrash />
-                        </IconButton>
-                        </Tooltip>
+                    
+                    <Stack spacing={1} sx={{ mb: 2 }}>
+                      <Typography sx={{ color: 'rgba(255,255,255,0.9)', fontSize: '0.875rem' }}>
+                        Địa điểm: {room.address}
+                      </Typography>
+                      <Typography sx={{ color: 'rgba(255,255,255,0.9)', fontSize: '0.875rem' }}>
+                        Giám thị: {room.supervisoryList}
+                      </Typography>
+                      <Typography sx={{ color: 'rgba(255,255,255,0.9)', fontSize: '0.875rem' }}>
+                        Số lượng thí sinh: {room.studentNum}
+                      </Typography>
+                      <Typography sx={{ color: 'rgba(255,255,255,0.9)', fontSize: '0.875rem' }}>
+                        Thời gian thi: {room.timeDuration} (phút)
+                      </Typography>
                     </Stack>
-                    </CardContent>
-                </Card>
+
+                    <Chip
+                      label={getSpecialState(room.state)}
+                      sx={{
+                        width: '100%',
+                        bgcolor: 'rgba(255,255,255,0.15)',
+                        color: 'white',
+                        mb: 2,
+                        '&:hover': {
+                          bgcolor: 'rgba(255,255,255,0.25)',
+                        }
+                      }}
+                    />
+                  </Box>
+
+                  {/* Fixed Position Footer Section */}
+                  <Box 
+                    sx={{
+                      mt: 'auto',
+                      pt: 2,
+                      borderTop: '1px solid rgba(255,255,255,0.1)',
+                    }}
+                  >
+                    <Stack 
+                      direction="row" 
+                      spacing={1} 
+                      justifyContent="center"
+                      sx={{ mb: 2 }}
+                    >
+                      <Tooltip title="Xem chi tiết">
+                        <IconButton 
+                          sx={{ 
+                            bgcolor: 'rgba(255,255,255,0.1)',
+                            '&:hover': { bgcolor: 'rgba(255,255,255,0.2)' }
+                          }}
+                        >
+                          <FcFrame />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Chỉnh sửa">
+                        <IconButton 
+                          sx={{ 
+                            bgcolor: 'rgba(255,255,255,0.1)',
+                            '&:hover': { bgcolor: 'rgba(255,255,255,0.2)' }
+                          }}
+                        >
+                          <FcEditImage />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Vô hiệu hoá phòng thi">
+                        <IconButton 
+                          sx={{ 
+                            bgcolor: 'rgba(255,255,255,0.1)',
+                            '&:hover': { bgcolor: 'rgba(255,255,255,0.2)' }
+                          }}
+                        >
+                          <FcFullTrash />
+                        </IconButton>
+                      </Tooltip>
+                    </Stack>
+
+                    <Typography 
+                      variant="caption" 
+                      sx={{ 
+                        display: 'block',
+                        color: 'text.secondary',
+                      }}
+                    >
+                      Tạo lúc: {new Date(room.createdAt).toLocaleString()}
+                    </Typography>
+                    <Typography 
+                      variant="caption" 
+                      sx={{ 
+                        display: 'block',
+                        color: 'text.secondary',
+                      }}
+                    >
+                      Người tạo: {room.createdUser}
+                    </Typography>
+                  </Box>
+                </CardContent>
+              </Card>
             </Grid2>
-            ))}
+          ))}
         </Grid2>
     </Box>
   );
 
+  const fetchInitDataRoom = async () => {
+    try {
+      const response = await api.get(`/roomExam/roomExams`);
+      
+      if (response.data.success === false) {
+        toast.warning(`Lỗi!, ${response.data.message}`, {
+            icon: "⚠️",
+        });
+        return;
+      }
+      console.log(response.data.dataList)
+      setGroupedRooms(groupRoomsByType(response.data.dataList));
+    } catch (error) {
+      console.log(error);
+      toast.warning("Hệ thống đang gặp sự cố, vui lòng thử lại sau!", {
+          icon: "⚠️",
+      });
+    }
+  };
+
+  useEffect(() => {
+      fetchInitDataRoom();
+  },[]);
+
   return (
     <Box sx={{ p: 3 }}>
-      {renderRoomSection("Phòng thi đang diễn ra", groupedRooms.active)}
-      {renderRoomSection("Phòng thi sắp diễn ra", groupedRooms.upcoming)}
-      {renderRoomSection("Phòng thi tạm hoãn hoặc gặp sự cố", groupedRooms.paused)}
+      <ToastContainer icon={true} />
+      {renderRoomSection("Phòng thi đang diễn ra", groupedRooms?.ACTIVE)}
+      {renderRoomSection("Phòng thi sắp diễn ra", groupedRooms?.WAITING)}
+      {renderRoomSection("Phòng thi tạm hoãn hoặc gặp sự cố", groupedRooms?.paused)}
     </Box>
   );
 };

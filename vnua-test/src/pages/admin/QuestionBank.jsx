@@ -22,14 +22,11 @@ import {
   Add as AddIcon,
   FileUpload as FileUploadIcon,
   FileDownload as FileDownloadIcon,
-  Translate,
 } from "@mui/icons-material";
 import DialogUploadFile from "../../components/admin/dialog/DialogUploadFileQuestion";
 import QuestionAnswerTable from "../../components/admin/table/QuestionAnswerTable";
 import api from "../../services/api/axios.config";
 import { ToastContainer, toast } from "react-toastify";
-import LoadingDialog from "../../components/common/Loading/LoadingDialog";
-import BubbleLoadingDialog from "../../components/common/Loading/BubbleLoadingDialog";
 
 const QuestionBank = () => {
   // State cho danh sách câu hỏi

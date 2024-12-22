@@ -13,17 +13,23 @@ function App() {
     <Router>
       <Routes>
         <Route path='/login' element={<Login />} />
+        <Route
+          path='/admin/*'
+          element={
+            <PrivateRoute>
+              <AdminRoutes />
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/exam/*" 
+          element={
+            <PrivateRoute>
+              <ExamRoutes />
+            </PrivateRoute>
+          } 
+        />
       </Routes>
-
-      {/* Yeu cau dang nhap de truy cap */}
-      <PrivateRoute>
-        <Routes>
-          {/* Admin Routes - admin */}
-          <Route path="/admin/*" element={<AdminRoutes />} />
-          {/* Exam Routes */}
-          <Route path="/exam/*" element={<ExamRoutes />} />
-        </Routes>
-      </PrivateRoute>
     </Router>
   );
 }

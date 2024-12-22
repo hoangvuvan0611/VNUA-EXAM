@@ -4,72 +4,14 @@ import React, { useState } from "react";
 import {
   Typography,
   Box,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  Chip,
-  List,
-  ListItem,
-  ListItemText,
   Button,
   IconButton,
   Tooltip,
 } from "@mui/material";
-import {
-  ExpandMore as ExpandMoreIcon,
-} from "@mui/icons-material";
-import { FcCalendar, FcInfo, FcPlus } from "react-icons/fc";
-import { FcHome } from "react-icons/fc";
+import { FcInfo, FcPlus } from "react-icons/fc";
 import ExamRoomManagementTable from "../../components/admin/table/ExamRoomManagementTable";
 import RoomManagement from "./RoomManagement";
 import DialogAddRoom from "../../components/admin/dialog/DialogAddRoom";
-
-const examData = [
-  {
-    id: 101,
-    name: "Ca Sáng",
-    status: "open",
-    time: "07:30 - 09:30",
-    rooms: [
-      {
-        id: 5345,
-        name: "Phòng A1",
-        location: "Tầng 2, Nhà A",
-        students: 45,
-        supervisors: 2,
-      },
-      {
-        id: 5332445,
-        name: "Phòng A1",
-        location: "Tầng 2, Nhà A",
-        students: 45,
-        supervisors: 2,
-      },
-    ],
-  },
-  {
-    id: 101,
-    name: "Ca Sáng",
-    status: "waiting",
-    time: "10:00 - 11:30",
-    rooms: [
-      {
-        id: 243241,
-        name: "Phòng A1",
-        location: "Tầng 2, Nhà A",
-        students: 45,
-        supervisors: 2,
-      },
-      {
-        id: 2034561,
-        name: "Phòng A1",
-        location: "Tầng 2, Nhà A",
-        students: 45,
-        supervisors: 2,
-      },
-    ],
-  }
-];
 
 const RoomExamManagement = () => {
 
