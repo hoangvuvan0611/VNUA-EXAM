@@ -27,70 +27,7 @@ import {
   Delete,
 } from "@mui/icons-material";
 import BubbleLoadingDialog from "../../common/Loading/BubbleLoadingDialog";
-
-const PropertyEditIcon = (props) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    width={20}
-    height={20}
-    color={""}
-    fill={"none"}
-    {...props}
-  >
-    <path
-      d="M21 11.5C21 7.02166 21 4.78249 19.6088 3.39124C18.2175 2 15.9783 2 11.5 2C7.02166 2 4.78249 2 3.39124 3.39124C2 4.78249 2 7.02166 2 11.5C2 15.9783 2 18.2175 3.39124 19.6088C4.72972 20.9472 6.85301 20.998 11 20.9999"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-    />
-    <path
-      d="M2 7H21"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinejoin="round"
-    />
-    <path
-      d="M10 16H11.5M6 16H7M10 12H16M6 12H7"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <path
-      d="M21.2633 14.8717C20.3622 13.8651 19.8215 13.925 19.2208 14.1048C18.8003 14.1647 17.3585 15.8422 16.7578 16.3765C15.7714 17.3478 14.7806 18.3479 14.7153 18.4784C14.5285 18.781 14.3548 19.3172 14.2707 19.9163C14.1145 20.815 13.8041 21.7815 14.1746 21.9133C14.3548 22.153 15.2559 21.8335 16.157 21.7017C16.7578 21.5938 17.1783 21.474 17.4787 21.2943C17.8992 21.0426 18.6801 20.1559 20.0258 18.8379C20.8697 17.9521 21.6838 17.34 21.9241 16.7409C22.1644 15.8422 21.804 15.3629 21.2633 14.8717Z"
-      stroke="currentColor"
-      strokeWidth="2"
-    />
-  </svg>
-);
-
-const DeletePutBackIcon = (props) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    width={20}
-    height={20}
-    color={""}
-    fill={"none"}
-    {...props}
-  >
-    <path
-      d="M4.47461 6.10018L5.31543 18.1768C5.40886 19.3365 6.28178 21.5536 8.51889 21.8022C10.756 22.0507 15.2503 21.9951 16.0699 21.9951C16.8895 21.9951 19.0128 21.4136 19.0128 19.0059C19.0128 16.5756 16.9833 15.9419 15.7077 15.9635H12.0554M12.0554 15.9635C12.0607 15.7494 12.1515 15.5372 12.3278 15.3828L14.487 13.4924M12.0554 15.9635C12.0497 16.1919 12.1412 16.4224 12.33 16.5864L14.487 18.4609M19.4701 5.82422L19.0023 13.4792"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <path
-      d="M3 5.49561H21M16.0555 5.49561L15.3729 4.08911C14.9194 3.15481 14.6926 2.68766 14.3015 2.39631C14.2148 2.33168 14.1229 2.2742 14.0268 2.22442C13.5937 2 13.0739 2 12.0343 2C10.9686 2 10.4358 2 9.99549 2.23383C9.89791 2.28565 9.80479 2.34547 9.7171 2.41265C9.32145 2.7158 9.10044 3.20004 8.65842 4.16854L8.05273 5.49561"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-);
+import { FcFullTrash, FcSupport } from "react-icons/fc";
 
 const LockedIcon = (props) => (
   <svg
@@ -186,7 +123,7 @@ const Row = ({
         <TableCell>
           <Tooltip title="Sửa câu hỏi">
             <IconButton color="info" onClick={() => onEditQuestion(row.id)}>
-              <PropertyEditIcon />
+              <FcSupport />
             </IconButton>
           </Tooltip>
           <Tooltip title="Cho phép mọi người cùng thấy">
@@ -196,7 +133,7 @@ const Row = ({
           </Tooltip>
           <Tooltip title="Xóa câu hỏi">
             <IconButton color="error" onClick={() => onDeleteQuestion(row.id)}>
-              <DeletePutBackIcon />
+              <FcFullTrash />
             </IconButton>
           </Tooltip>
         </TableCell>

@@ -109,10 +109,12 @@ const Login = ({ setLoggedIn }) => {
         }, { withCredentials: true },
       );
 
+      console.log(response.data);
       if (response.data.success === false) {
-        toast.warning("Thông tin đăng nhập không chính xác", {
+        toast.warning(`Đăng nhập không thành công: ${response.data.message}`, {
           icon: "⚠️",
         });
+        return;
       }
 
       // setLoggedIn(true);
@@ -175,7 +177,7 @@ const Login = ({ setLoggedIn }) => {
             </Typography>
             <input
               type="text"
-              autoComplete="section-blue shipping name"
+              autoComplete="username"
               value={usernameOrEmail}
               onChange={(e) => setUsernameOrEmail(e.target.value)}
               id="registerUserName"
@@ -183,7 +185,7 @@ const Login = ({ setLoggedIn }) => {
             />
             <input
               type="password"
-              autoComplete="section-blue shipping new-password"
+              autoComplete="current-password"
               value={password}
               onInput={(e) => setPassword(e.target.value)}
               id="registerPassword"
@@ -213,7 +215,10 @@ const Login = ({ setLoggedIn }) => {
               id="loginStudentCode"
               placeholder="Nhập mã thí sinh"
             />
-            <Button onClick={loginExam} sx={{ mt: 2 }}>
+            <Button 
+              onClick={loginExam} 
+              sx={{ mt: 2 }}
+            >
               Đăng nhập
             </Button>
           </form>

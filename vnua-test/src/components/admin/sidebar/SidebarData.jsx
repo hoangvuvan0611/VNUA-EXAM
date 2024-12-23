@@ -9,7 +9,7 @@ import { LuLayoutList } from "react-icons/lu";
 
 export const SidebarData = [
     {
-        link: '/admin/',
+        link: '/admin',
         icon: <RxDashboard size='20px' />,
         label: 'Tổng Quan'
     },    

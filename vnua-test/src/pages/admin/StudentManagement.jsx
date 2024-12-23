@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import MyAppBar from "../../components/admin/appbar/MyAppBar";
 import EnhancedTable from "../../components/admin/table/EnhancedTable";
 
 import { 
@@ -22,7 +21,6 @@ import {
     EditNote,
 } from '@mui/icons-material';
 
-import { useTheme } from '@mui/material/styles';
 import DialogUploadFile from "../../components/admin/dialog/DialogUploadFileQuestion";
 import DialogAddNew from "../../components/admin/dialog/DialogAddNew";
 import api from "../../services/api/axios.config";
@@ -53,7 +51,6 @@ const StudentManagement = () => {
         setOpenDialogUploadFile(false);
         // Đặt lại giá trị của file khi đóng hộp thoại
         setSelectedFile(null);
-        console.log(selectedFile)
     }
 
     // Lấy danh sách sinh viên
@@ -185,10 +182,15 @@ const StudentManagement = () => {
                 </Typography>
             </Box>
 
-            {/* Lessons Section */}
+            {/* bảng danh sách sinh viên */}
             <Box sx={{ml: 3, mr: 3 }}>
-                <EnhancedTable studentData={studentList}/>
+                <EnhancedTable 
+                    studentData={studentList} // Danh sách sinh viên
+                    isLoading={isLoading} // Trạng thái loading
+                />
             </Box>
+
+            {/* Dialog upload sinh viên theo file */}
             <DialogUploadFile open={openDialogUploadFile} onClose={handleCloseDialogUploadFile} title={"Tải lên file danh sách sinh viên"}/>
 
             {/* Dialog them moi sinh vien */}

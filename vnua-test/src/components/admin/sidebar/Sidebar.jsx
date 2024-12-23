@@ -32,7 +32,7 @@ function Sidebar({isOpen, onToggle}) {
             >
                 <div className="p-4">
                     <div className="mb-8 pt-14 lg:pt-0">
-                        <Link style={{textDecoration: 'none'}} to={'/admin/'} onClick={() => {navigate.pathname = /admin/}}>
+                        <Link style={{textDecoration: 'none'}} to={'/admin'} onClick={() => {navigate.pathname = '/admin'}}>
                             <div className="flex items-center mb-7 mt-3">
                                 <img alt="VNUA" src={logoSideBar} sx={{width: '50px', height: '50px'}} style={{width: '50px'}}/>
                                 <h2 className="text-2xl font-bold ml-4 sidebar-title">VNUA TEST</h2>

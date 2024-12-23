@@ -44,21 +44,21 @@ function AdminRoutes() {
             // Kiểm tra token có hợp lệ không và quyết định xem có cần đăng nhập lại hay không
             checkTokenValidity(storedToken);
         }
-    }, []);
+    }, [60000]);
 
     return (
         <AdminLayout>
             <Routes>
-                <Route path='/' element={<Dashboard/>} />
-                <Route path='/students' element={<StudentManagement/>} />
-                <Route path='/subjects' element={<SubjectManagement/>} />
-                <Route path='/examBank' element={<ExamPaperBank/>} />
-                <Route path="/users" element={<UserManagement />} />
-                <Route path="/exams" element={<ExamManagement />} />
-                <Route path="/poetry" element={<PoetryManagement />} />
-                <Route path="/examRoom" element={<RoomExamManagement />} />
-                <Route path="/questions" element={<QuestionBank />} />
-                <Route path="/setting" element={<Setting />} />
+                <Route index element={<Dashboard />} />
+                <Route path="students" element={<StudentManagement />} />
+                <Route path="subjects" element={<SubjectManagement />} />
+                <Route path="examBank" element={<ExamPaperBank />} />
+                <Route path="users" element={<UserManagement />} />
+                <Route path="exams" element={<ExamManagement />} />
+                <Route path="poetry" element={<PoetryManagement />} />
+                <Route path="examRoom" element={<RoomExamManagement />} />
+                <Route path="questions" element={<QuestionBank />} />
+                <Route path="setting" element={<Setting />} />
             </Routes>
         </AdminLayout>
     );
