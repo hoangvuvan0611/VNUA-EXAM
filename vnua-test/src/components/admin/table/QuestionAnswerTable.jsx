@@ -56,17 +56,7 @@ const LockedIcon = (props) => (
 );
 
 // Component cho mỗi hàng và phần collapse
-const Row = ({
-  row,
-  index,
-  page,
-  onDeleteQuestion,
-  onEditQuestion,
-  onToggleLock,
-  selected,
-  handleClick,
-  isSelected,
-}) => {
+const Row = ({ row, index, page, onDeleteQuestion, onEditQuestion, onToggleLock, selected, handleClick, isSelected }) => {
   const [open, setOpen] = useState(false);
   const labelId = `enhanced-table-checkbox-${index}`;
 
@@ -79,12 +69,6 @@ const Row = ({
         tabIndex={-1}
         selected={isSelected}
         key={row.id}
-        // sx={{
-        //   backgroundColor: index % 2 === 0 ? '#F0FFF0' : '#ffffff', // Màu nền xen kẽ
-        //   '&:hover': {
-        //       backgroundColor: '#e0e0e0', // Màu khi hover
-        //   },
-        // }}
       >
         <TableCell padding="checkbox">
           <Checkbox
@@ -122,7 +106,7 @@ const Row = ({
         <TableCell>{row.level}</TableCell>
         <TableCell>
           <Tooltip title="Sửa câu hỏi">
-            <IconButton color="info" onClick={() => onEditQuestion(row.id)}>
+            <IconButton color="info" onClick={() => onEditQuestion(row)}>
               <FcSupport />
             </IconButton>
           </Tooltip>
@@ -240,15 +224,7 @@ const EnhancedTableToolbar = ({ numSelected }) => (
 );
 
 // Component chính
-const QuestionTable = ({
-  isLoading = false,
-  onDeleteQuestion,
-  questions,
-  totalElements,
-  totalPages = 0,
-  onPageChange,
-  onSortChange,
-}) => {
+const QuestionTable = ({ isLoading = false, onDeleteQuestion, onEditQuestion, questions, totalElements, totalPages = 0, onPageChange, onSortChange }) => {
   const [dense, setDense] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(20);
@@ -333,88 +309,6 @@ const QuestionTable = ({
 
   return (
     <Box sx={{ width: "100%" }}>
-      {/* Toolbar với Search và Filters */}
-      {/* <Paper sx={{ mb: 2, p: 2 }}>
-        <Stack spacing={2}>
-          <TextField
-            fullWidth
-            variant="outlined"
-            label="Tìm kiếm câu hỏi"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-          />
-          <Stack direction="row" spacing={2}>
-            <FormControl fullWidth>
-              <InputLabel>Môn học</InputLabel>
-              <Select
-                value={filterSubject}
-                label="Môn học"
-                onChange={(e) => setFilterSubject(e.target.value)}
-                startAdornment={
-                  <InputAdornment position="start">
-                    <FilterListIcon />
-                  </InputAdornment>
-                }
-              >
-                <MenuItem value="">Tất cả</MenuItem>
-                {[6].map((subject) => (
-                  <MenuItem key={subject} value={subject}>
-                    {subject}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <FormControl fullWidth>
-              <InputLabel>Chương</InputLabel>
-              <Select
-                value={filterChapter}
-                label="Chương"
-                onChange={(e) => setFilterChapter(e.target.value)}
-                startAdornment={
-                  <InputAdornment position="start">
-                    <FilterListIcon />
-                  </InputAdornment>
-                }
-              >
-                <MenuItem value="">Tất cả</MenuItem>
-                {[4].map((chapter) => (
-                  <MenuItem key={chapter} value={chapter}>
-                    {chapter}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <FormControl fullWidth>
-              <InputLabel>Mức độ</InputLabel>
-              <Select
-                value={filterLevel}
-                label="Mức độ"
-                onChange={(e) => setFilterLevel(e.target.value)}
-                startAdornment={
-                  <InputAdornment position="start">
-                    <FilterListIcon />
-                  </InputAdornment>
-                }
-              >
-                <MenuItem value="">Tất cả</MenuItem>
-                {[5].map((level) => (
-                  <MenuItem key={level} value={level}>
-                    {level}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Stack>
-        </Stack>
-      </Paper> */}
-
       {/* Table */}
       <EnhancedTableToolbar numSelected={selected.length} />
       <TableContainer component={Paper}>
@@ -535,6 +429,7 @@ const QuestionTable = ({
                     selected={selected}
                     handleClick={handleClick}
                     isSelected={isSelected(row.id)}
+                    onEditQuestion={onEditQuestion}
                   />
                 ))
               )}
