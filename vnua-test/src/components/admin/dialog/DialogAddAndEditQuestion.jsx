@@ -4,20 +4,11 @@ import { FcFullTrash, FcPlus, FcSupport } from "react-icons/fc";
 import { toast } from "react-toastify";
 import api from "../../../services/api/axios.config";
 
-const DialogAddAndEditQuestion = ({ open, onClose, isEdit }) => {
+const DialogAddAndEditQuestion = ({ open, onClose, isEdit, question, setQuestion }) => {
 
     const [ errors, setErrors ] = useState({});
     const [ subjectSelected, setSubjectSelected ] = useState(null);
     const [ subjectList, setSubjectList ] = useState([]);
-    const [ newQuestion, setNewQuestion ] = useState({
-        id: "",
-        content: "",
-        subjectId: "",
-        chapter: "",
-        type: "",
-        level: "",
-        answerList: [],
-    });
 
     const handleCloseDialog = () => {
         onClose();
@@ -26,8 +17,8 @@ const DialogAddAndEditQuestion = ({ open, onClose, isEdit }) => {
     // Xử lý khi input thay đổi
     const handleInputChange = (e) => {
         let {name, value} = e.target;
-        setNewQuestion({
-            ...newQuestion,
+        setQuestion({
+            ...question,
             [name]: value
         });
     } 
@@ -44,8 +35,8 @@ const DialogAddAndEditQuestion = ({ open, onClose, isEdit }) => {
                 throw new ErrorEvent();
             }
 
-            setNewQuestion({
-                ...newQuestion,
+            setQuestion({
+                ...question,
                 subjectCode: event.target.value,
             });
             // setQuestionList(response.data.dataList);
@@ -61,9 +52,9 @@ const DialogAddAndEditQuestion = ({ open, onClose, isEdit }) => {
     // Xử lý nhập cho mỗi câu trả lời
     const handleInputChangeAnswer = (e, index) => {
         let { name, value } = e.target;
-        setNewQuestion({
-            ...newQuestion,
-            answerList: newQuestion.answerList.map(( answer, i ) => index === i ?
+        setQuestion({
+            ...question,
+            answerList: question.answerList.map(( answer, i ) => index === i ?
                 {
                     ...answer,
                     [name]: value,
@@ -74,18 +65,18 @@ const DialogAddAndEditQuestion = ({ open, onClose, isEdit }) => {
 
     // Xử lý xóa câu trả lời
     const handleDeleteAnswer = (index) => {
-        setNewQuestion({
-            ...newQuestion,
-            answerList: newQuestion.answerList.filter((_, i) => index !== i),
+        setQuestion({
+            ...question,
+            answerList: question.answerList.filter((_, i) => index !== i),
         });
     }
 
     // Xử lý thêm mới câu trả lời
     const handleClickAddAnswer = () => {
-        setNewQuestion({
-            ...newQuestion,
+        setQuestion({
+            ...question,
             answerList: [
-                ...newQuestion.answerList,
+                ...question.answerList,
                 {
                     content: "",
                 }
@@ -120,7 +111,7 @@ const DialogAddAndEditQuestion = ({ open, onClose, isEdit }) => {
                                 multiline={true}
                                 label="Nội dung câu hỏi"
                                 name="content"
-                                value={newQuestion.content}
+                                value={question.content}
                                 onChange={handleInputChange}
                                 error={!!errors.content}
                                 helperText={errors.content}
@@ -177,7 +168,7 @@ const DialogAddAndEditQuestion = ({ open, onClose, isEdit }) => {
                                 fullWidth
                                 label="Loại câu hỏi"
                                 name="type"
-                                value={newQuestion.type}
+                                value={question.type}
                                 onChange={handleInputChange}
                                 error={!!errors.type}
                                 helperText={errors.type}
@@ -197,7 +188,7 @@ const DialogAddAndEditQuestion = ({ open, onClose, isEdit }) => {
                             </Button>
                             {/* Danh sách chương của môn học */}
                             {
-                                newQuestion.answerList.map((answer, index) => (
+                                question.answerList?.length > 0 && question?.answerList.map((answer, index) => (
                                     <Box key={index} sx={{mb: 1}}>
                                         <Box justifyContent={'space-between'}>
                                             <Typography

@@ -33,7 +33,15 @@ const QuestionBank = () => {
 
   // State cho dialog thêm/sửa câu hỏi
   const [ openDialog, setOpenDialog ] = useState(false);
-  const [ selectedQuestion, setSelectedQuestion ] = useState(null);
+  const [ selectedQuestion, setSelectedQuestion ] = useState({
+    id: "",
+    content: "",
+    subjectId: "",
+    chapter: "",
+    type: "",
+    level: "",
+    answerList: [],
+  });
   const [ currentTab, setCurrentTab ] = useState(0);
   const [ isEditQuestion, setIsEditQuestion ] = useState(false);
 
@@ -62,7 +70,6 @@ const QuestionBank = () => {
 
   // Xử lý chọn câu hỏi và hiển thị dialog để sửa
   const handleClickEditQuestion = (question) => {
-    alert("edit")
     setIsEditQuestion(true); // Mở dialog update
     setSelectedQuestion(question);
     setOpenDialog(true);
@@ -208,6 +215,8 @@ const QuestionBank = () => {
           open={openDialog}
           onClose={handleCloseDialogAddQuestion}
           isEdit={isEditQuestion}
+          question={selectedQuestion}
+          setQuestion={setSelectedQuestion}
         />
       </Box>
     </div>
